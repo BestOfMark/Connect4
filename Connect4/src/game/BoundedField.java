@@ -33,6 +33,13 @@ public class BoundedField extends Field {
 		return dimZ;
 	}
 
+	/**
+	 * Checks if a player has a sequence of at least the winning length somewhere in the field in some direction.
+	 * @param c The chip associated to the player
+	 * @return <code>true</code> if such a sequence has been found in at least one of all the possible directions,
+	 * <code>false</code> otherwise.
+	 */
+	//@ requires c != null;
 	@Override
 	public boolean checkWin(Chip c) {
 		for (int x = 0; x < dimX; x++) {
@@ -51,12 +58,26 @@ public class BoundedField extends Field {
 		return false;
 	}
 	
+	/**
+	 * Checks for a winning sequence starting from a point <code>(startX, startY, startZ)</code> running towards
+	 * a given direction given by a trace vector <code>[dx, dy, dz]</code>.
+	 * @param c the <code>Chip</code> for which a winning sequence length is checked.
+	 * @param startX the x-coordinate of the starting point.
+	 * @param startY the y-coordinate of the starting point.
+	 * @param startZ the z-coordinate of the starting point.
+	 * @param dx the x-component of the trace vector.
+	 * @param dy the y-component of the trace vector.
+	 * @param dz the z-component of the trace vector.
+	 * @return <code>true</code> if a sequence of the winning length has been found, <code>false</code> otherwise.
+	 */
+	//@ requires c != null;
+	//@ requires dx != 0 || dy != 0 || dz != 0;
 	private boolean traceRay(Chip c, int startX, int startY, int startZ, int dx, int dy, int dz) {
 		for (int i = 0; i < winLength; i++) {
 			int currX = startX + i * dx;
 			int currY = startY + i * dx;
 			int currZ = startX + i * dx;
-			if (currZ >= dimZ || !inBounds(currX, currY)) return false;
+			if (currZ < 0 || currZ >= dimZ || !inBounds(currX, currY)) return false;
 			if (board[currX][currY][currZ] != c) return false;
 		}
 		return true;
