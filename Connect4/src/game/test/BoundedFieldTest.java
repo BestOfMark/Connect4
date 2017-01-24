@@ -1,13 +1,10 @@
 package game.test;
 
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import game.BoundedField;
 import game.Chip;
-import game.Field;
 import org.junit.Assert;
 
 public class BoundedFieldTest {
@@ -27,13 +24,19 @@ public class BoundedFieldTest {
 			bf2.addChip(c1, 0, 0);
 		}
 		for (int z = 0; z < bf2Z - 1; z++) {
-			bf2.addChip(c2, bf2X - 1, bf2Z - 1);
+			bf2.addChip(c2, bf2X - 1, bf2Y - 1);
 		}
 	}
 
 	@Test
 	public void addChip() {
 		bf1.addChip(c1, 0, 0);
+		Assert.assertEquals(1, bf1.columnHeight(0, 0));
+		bf1.addChip(c2, 0, 0);
+		Assert.assertEquals(2, bf1.columnHeight(0, 0));
+		Assert.assertFalse(bf2.columnFull(bf2X - 1, bf2Y - 1));
+		bf2.addChip(c1, bf2X - 1, bf2Y - 1);
+		Assert.assertTrue(bf2.columnFull(bf2X - 1, bf2Y - 1));
 	}
 	
 	@Test
@@ -53,22 +56,28 @@ public class BoundedFieldTest {
 	public void columnFull() {
 		Assert.assertFalse(bf1.columnFull(0, 0));
 		Assert.assertTrue(bf2.columnFull(0, 0));
-		Assert.assertFalse(bf2.columnFull(bf2X - 1, bf2Z - 1));
+		Assert.assertFalse(bf2.columnFull(bf2X - 1, bf2Y - 1));
 	}
 
 	@Test
 	public void columnHeight() {
-		Assert.assertEquals(0, bf1.columnHeight(0, 0));
+		for (int x = 0; x < bf1X; x++) {
+			for (int y = 0; y < bf1Y; y++) {
+				Assert.assertEquals(0, bf1.columnHeight(0, 0));
+			}
+		}
+		Assert.assertEquals(bf2Z, bf2.columnHeight(0, 0));
+		Assert.assertEquals(bf2Z - 1, bf2.columnHeight(bf2X - 1, bf2Y - 1));
 	}
 
 	@Test
 	public void checkWin() {
-
+		
 	}
 	
 	@Test
-	public Field deepCopy() {
-		return null;
+	public void deepCopy() {
+		
 	}
 
 }
