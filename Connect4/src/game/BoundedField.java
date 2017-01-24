@@ -10,8 +10,8 @@ public class BoundedField extends Field {
 	//@ invariant board != null;
 	protected Chip[][][] board;
 	
-	public BoundedField(int sizeX, int sizeY, int sizeZ) {
-		super(sizeX, sizeY, sizeZ);
+	public BoundedField(int sizeX, int sizeY, int sizeZ, int winLength) {
+		super(sizeX, sizeY, sizeZ, winLength);
 		board = new Chip[sizeX][sizeY][sizeZ];
 	}
 
@@ -35,8 +35,18 @@ public class BoundedField extends Field {
 
 	@Override
 	public boolean checkWin(Chip c) {
-		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	private boolean traceRay(Chip c, int startX, int startY, int startZ, int dx, int dy, int dz) {
+		for (int i = 0; i < winLength; i++) {
+			int currX = startX + i * dx;
+			int currY = startY + i * dx;
+			int currZ = startX + i * dx;
+			if (currZ >= dimZ || !inBounds(currX, currY)) return false;
+			if (board[currX][currY][currZ] != c) return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -44,8 +54,8 @@ public class BoundedField extends Field {
 	 * state of the original.
 	 * @return a copy of the field.
 	 */
-	/*@ pure */ public Field deepCopy() {
-		Field copy = new BoundedField(dimX, dimY, dimZ);
+	/*@ pure */ public BoundedField deepCopy() {
+		BoundedField copy = new BoundedField(dimX, dimY, dimZ, winLength);
 		for (int i = 0; i < dimX; i++) {
 			for (int j = 0; j < dimY; j++) {
 				for (int k = 0; k < columnHeight(i,j); k++ ) {
@@ -58,7 +68,14 @@ public class BoundedField extends Field {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		return toString();
+		StringBuilder sb = new StringBuilder("Textual overview of the board:\n");
+		for (int y = 0; y < dimY; y++) {
+			for (int x = 0; x < dimX; x++) {
+				sb.append(String.format("%2d", columnHeight(x, y)));
+				if (x < dimX - 1) sb.append(" ");
+			}
+			if (y < dimY - 1) sb.append('\n');
+		}
+		return sb.toString();
 	}
 }

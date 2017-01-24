@@ -9,15 +9,16 @@ import org.junit.Assert;
 
 public class BoundedFieldTest {
 
+	private static final int WIN = 4;
 	private static final int bf1X = 4, bf1Y = 4, bf1Z = 4;
-	private static final int bf2X = 1, bf2Y = 2, bf2Z = 3;
+	private static final int bf2X = 4, bf2Y = 4, bf2Z = 4;
 	private BoundedField bf1, bf2;
 	private Chip c1, c2;
 	
 	@Before
 	public void setUp() throws Exception {
-		bf1 = new BoundedField(bf1X,bf1Y,bf1Z);
-		bf2 = new BoundedField(bf2X,bf2Y,bf2Z);
+		bf1 = new BoundedField(bf1X,bf1Y,bf1Z, WIN);
+		bf2 = new BoundedField(bf2X,bf2Y,bf2Z, WIN);
 		c1 = Chip.RED;
 		c2 = Chip.YELLOW;
 		for (int z = 0; z < bf2Z; z++) {
@@ -78,6 +79,12 @@ public class BoundedFieldTest {
 	@Test
 	public void deepCopy() {
 		
+	}
+	
+	@Test
+	public void printString() {
+		System.out.println(bf1.toString());
+		System.out.println(bf2.toString());
 	}
 
 }

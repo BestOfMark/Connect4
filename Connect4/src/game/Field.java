@@ -10,6 +10,8 @@ public abstract class Field extends Observable {
 	//@ invariant dimX > 0 && dimY > 0 && dimZ > 0;
 	protected final int dimX, dimY, dimZ;
 	
+	protected final int winLength;
+	
 	/**
 	 * This is a convenience constructor for subclasses to set the dimensions of the field.
 	 * @param sizeX the x dimension of the field, also known as the width.
@@ -18,10 +20,11 @@ public abstract class Field extends Observable {
 	 * height this should be <code>-1</code>.
 	 */
 	//@ requires sizeX > 0; sizeY > 0; sizeZ > 0;
-	protected Field(int sizeX, int sizeY, int sizeZ) {
+	protected Field(int sizeX, int sizeY, int sizeZ, int winLength) {
 		dimX = sizeX; 
 		dimY = sizeY;
 		dimZ = sizeZ;
+		this.winLength = winLength;
 	}
 	
 
