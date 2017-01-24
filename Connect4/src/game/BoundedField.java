@@ -22,7 +22,7 @@ public class BoundedField extends Field {
 
 	@Override
 	public boolean columnFull(int x, int y) {
-		return columnHeight(x, y) == dimY;
+		return columnHeight(x, y) == dimZ;
 	}
 
 	@Override
@@ -58,6 +58,7 @@ public class BoundedField extends Field {
 
 	@Override
 	public String toString() {
-		return super.toString();
+		StringBuilder sb = new StringBuilder();
+		return toString();
 	}
 }
