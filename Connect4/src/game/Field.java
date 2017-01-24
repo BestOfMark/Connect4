@@ -45,6 +45,7 @@ public abstract class Field extends Observable {
 	 * <code>false</code> if there is still room for a new chip.
 	 */
 	//@ requires inBounds(x,y);
+	//@ ensures \result == (columnHeight(x,y) == dimY);
 	/*@ pure */ abstract public boolean columnFull(int x, int y);
 	
 	/**
