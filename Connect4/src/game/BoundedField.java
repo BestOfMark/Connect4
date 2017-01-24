@@ -45,13 +45,25 @@ public class BoundedField extends Field {
 		for (int x = 0; x < dimX; x++) {
 			for (int y = 0; y < dimY; y++) {
 				for (int z = 0; z < dimZ; z++) {
-					if (traceRay(c, x, y, z, 0, 0, 1)) return true;
-					if (traceRay(c, x, y, z, 0, 1, 0)) return true;
-					if (traceRay(c, x, y, z, 0, 1, 1)) return true;
-					if (traceRay(c, x, y, z, 1, 0, 0)) return true;
-					if (traceRay(c, x, y, z, 1, 0, 1)) return true;
-					if (traceRay(c, x, y, z, 1, 1, 0)) return true;
-					if (traceRay(c, x, y, z, 1, 1, 1)) return true;
+					if (trace(c, x, y, z, 0, 0, 1)) return true;
+					if (trace(c, x, y, z, 0, 1, 0)) return true;
+					if (trace(c, x, y, z, 0, 1, 1)) return true;
+					if (trace(c, x, y, z, 1, 0, 0)) return true;
+					if (trace(c, x, y, z, 1, 0, 1)) return true;
+					if (trace(c, x, y, z, 1, 1, 0)) return true;
+					if (trace(c, x, y, z, 1, 1, 1)) return true;
+					
+					if (trace(c, x, y, z, 0, -1, 1)) return true;
+					if (trace(c, x, y, z, 1, -1, 1)) return true;
+					if (trace(c, x, y, z, 1, -1, 0)) return true;
+					
+					if (trace(c, x, y, z, -1, 0, 1)) return true;
+					if (trace(c, x, y, z, -1, -1, 1)) return true;
+					if (trace(c, x, y, z, -1, -1, 0)) return true;
+					
+					if (trace(c, x, y, z, -1, 0, 1)) return true;
+					if (trace(c, x, y, z, -1, 1, 1)) return true;
+					if (trace(c, x, y, z, -1, 1, 0)) return true;
 				}
 			}
 		}
@@ -72,7 +84,7 @@ public class BoundedField extends Field {
 	 */
 	//@ requires c != null;
 	//@ requires dx != 0 || dy != 0 || dz != 0;
-	private boolean traceRay(Chip c, int startX, int startY, int startZ, int dx, int dy, int dz) {
+	private boolean trace(Chip c, int startX, int startY, int startZ, int dx, int dy, int dz) {
 		for (int i = 0; i < winLength; i++) {
 			int currX = startX + i * dx;
 			int currY = startY + i * dx;
