@@ -35,6 +35,19 @@ public class BoundedField extends Field {
 
 	@Override
 	public boolean checkWin(Chip c) {
+		for (int x = 0; x < dimX; x++) {
+			for (int y = 0; y < dimY; y++) {
+				for (int z = 0; z < dimZ; z++) {
+					if (traceRay(c, x, y, z, 0, 0, 1)) return true;
+					if (traceRay(c, x, y, z, 0, 1, 0)) return true;
+					if (traceRay(c, x, y, z, 0, 1, 1)) return true;
+					if (traceRay(c, x, y, z, 1, 0, 0)) return true;
+					if (traceRay(c, x, y, z, 1, 0, 1)) return true;
+					if (traceRay(c, x, y, z, 1, 1, 0)) return true;
+					if (traceRay(c, x, y, z, 1, 1, 1)) return true;
+				}
+			}
+		}
 		return false;
 	}
 	
