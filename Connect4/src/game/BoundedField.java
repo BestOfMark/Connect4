@@ -12,25 +12,25 @@ public class BoundedField extends Field {
 	
 	public BoundedField(int sizeX, int sizeY, int sizeZ) {
 		super(sizeX, sizeY, sizeZ);
-		// TODO Auto-generated constructor stub
+		board = new Chip[sizeX][sizeY][sizeZ];
 	}
 
 	@Override
 	public void addChip(Chip c, int x, int y) {
-		// TODO Auto-generated method stub
-
+		board[x][y][columnHeight(x,y)] = c;
 	}
 
 	@Override
 	public boolean columnFull(int x, int y) {
-		// TODO Auto-generated method stub
-		return false;
+		return columnHeight(x, y) == dimY;
 	}
 
 	@Override
 	public int columnHeight(int x, int y) {
-		// TODO Auto-generated method stub
-		return 0;
+		for (int z = 0; z < dimZ; z++) {
+			if (board[x][y][z] == null) return z;
+		}
+		return dimZ;
 	}
 
 	@Override
@@ -45,7 +45,15 @@ public class BoundedField extends Field {
 	 * @return a copy of the field.
 	 */
 	/*@ pure */ public Field deepCopy() {
-		return null;
+		Field copy = new BoundedField(dimX, dimY, dimZ);
+		for (int i = 0; i < dimX; i++) {
+			for (int j = 0; j < dimY; j++) {
+				for (int k = 0; k < columnHeight(i,j); k++ ) {
+					copy.addChip(board[i][j][k] ,i, j);
+				}
+			}
+		}
+		return copy;
 	}
 
 	@Override
