@@ -78,7 +78,13 @@ public class BoundedFieldTest {
 	
 	@Test
 	public void deepCopy() {
-		
+		bf1.addChip(Chip.RED, 0, 0);
+		Assert.assertEquals(1, bf1.columnHeight(0, 0));
+		BoundedField copy = bf1.deepCopy();
+		Assert.assertEquals(1, copy.columnHeight(0, 0));
+		copy.addChip(Chip.YELLOW, 0, 0);
+		Assert.assertEquals(1, bf1.columnHeight(0, 0));
+		Assert.assertEquals(2, copy.columnHeight(0, 0));
 	}
 	
 	@Test

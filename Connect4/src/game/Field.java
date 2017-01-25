@@ -8,9 +8,9 @@ public abstract class Field extends Observable {
 	 * Field dimension
 	 */
 	//@ invariant dimX > 0 && dimY > 0 && dimZ > 0;
-	protected final int dimX, dimY, dimZ;
+	public final int dimX, dimY, dimZ;
 	
-	protected final int winLength;
+	public final int winLength;
 	
 	/**
 	 * This is a convenience constructor for subclasses to set the dimensions of the field.
@@ -81,4 +81,11 @@ public abstract class Field extends Observable {
 	 */
 	//@ requires c != null;
 	/*@ pure */ abstract public boolean checkWin(Chip c);
+	
+	/**
+	 * Returns an unlinked copy of the field. Changing the state of the copy will not change the
+	 * state of the original.
+	 * @return a copy of the field.
+	 */
+	/*@ pure */ abstract public Field deepCopy();
 }

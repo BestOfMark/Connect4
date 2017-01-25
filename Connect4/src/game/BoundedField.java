@@ -95,12 +95,8 @@ public class BoundedField extends Field {
 		return true;
 	}
 	
-	/**
-	 * Returns an unlinked copy of the field. Changing the state of the copy will not change the
-	 * state of the original.
-	 * @return a copy of the field.
-	 */
-	/*@ pure */ public BoundedField deepCopy() {
+	@Override
+	public BoundedField deepCopy() {
 		BoundedField copy = new BoundedField(dimX, dimY, dimZ, winLength);
 		for (int i = 0; i < dimX; i++) {
 			for (int j = 0; j < dimY; j++) {
