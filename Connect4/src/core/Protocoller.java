@@ -87,7 +87,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 		}
 	}
 	
-	//Core functionality
+	//Core functionality 
 	private static final String CMD_WELCOME = "WELCOME";
 	private static final String CMD_GAME = "GAME";
 	private static final String CMD_MOVE_SUCCESS = "MOVE_SUCCESS";
