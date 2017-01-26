@@ -73,10 +73,17 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 		}
 	}
 
-	public void parse(String input) {
+	public void parse(String input) throws UnknownServerCommandFormatException {
 		if (input.startsWith(CMD_WELCOME)) {
 			input = input.substring(CMD_WELCOME.length()).trim();
-			String[] args;
+			String[] args = input.split("[\\s,]+");
+			try {
+				client.welcomed(Integer.parseInt(args[0]),
+						Integer.parseInt(args[1]),
+						Integer.parseInt(args[2]));
+			} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+				throw new UnknownServerCommandFormatException(CMD_WELCOME, input);
+			}
 		}
 	}
 	
