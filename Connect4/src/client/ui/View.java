@@ -1,4 +1,4 @@
-package ui;
+package client.ui;
 
 import java.util.Observer;
 

@@ -1,18 +1,18 @@
-package core;
+package client;
 
 import java.awt.Point;
 import java.io.IOException;
 
+import client.player.ComputerPlayer;
+import client.player.HumanPlayer;
+import client.player.LookingForBetterName;
+import client.player.Player;
+import client.ui.Controller;
+import client.ui.TUIController;
+import client.ui.View;
 import game.BoundedField;
 import game.Chip;
 import game.Field;
-import player.ComputerPlayer;
-import player.HumanPlayer;
-import player.LookingForBetterName;
-import player.Player;
-import ui.Controller;
-import ui.TUIController;
-import ui.View;
 
 public class Client {
 

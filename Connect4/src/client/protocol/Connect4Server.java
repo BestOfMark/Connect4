@@ -1,4 +1,4 @@
-package core.protocol;
+package client.protocol;
 
 public interface Connect4Server {
 

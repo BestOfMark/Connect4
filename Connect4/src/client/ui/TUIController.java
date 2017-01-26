@@ -1,4 +1,4 @@
-package ui;
+package client.ui;
 
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
+import client.player.ComputerPlayer;
+import client.player.Player;
 import game.Field;
-import player.ComputerPlayer;
-import player.Player;
 
 public class TUIController extends Controller {
 	

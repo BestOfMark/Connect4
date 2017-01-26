@@ -1,4 +1,4 @@
-package player;
+package client.player;
 
 import game.Chip;
 

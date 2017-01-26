@@ -1,4 +1,4 @@
-package core.protocol;
+package client.protocol;
 
 import java.io.IOException;
 

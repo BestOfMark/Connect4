@@ -1,4 +1,4 @@
-package core;
+package client;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -6,8 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import core.protocol.ChatCapabilityClient;
-import core.protocol.Connect4Client;
+
+import client.protocol.ChatCapabilityClient;
+import client.protocol.Connect4Client;
 
 public class Protocoller implements Connect4Client, ChatCapabilityClient {
 

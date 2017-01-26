@@ -1,4 +1,4 @@
-package core;
+package client;
 
 public class UnknownServerCommandFormatException extends Exception {
 	private static final long serialVersionUID = 1L;

@@ -1,7 +1,7 @@
-package player;
+package client.player;
 
+import client.ui.Controller;
 import game.Chip;
-import ui.Controller;
 
 public abstract class Player {
 

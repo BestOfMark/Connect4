@@ -1,11 +1,11 @@
-package ui;
+package client.ui;
 
 import java.awt.Point;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import client.player.Player;
 import game.Field;
-import player.Player;
 
 public abstract class Controller {
 
