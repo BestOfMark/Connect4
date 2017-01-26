@@ -44,5 +44,7 @@ public abstract class Controller {
 	public View getView() {
 		return view;
 	}
+	
+	public abstract void close();
 
 }

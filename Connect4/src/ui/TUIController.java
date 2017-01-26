@@ -13,6 +13,7 @@ import player.Player;
 public class TUIController extends Controller {
 	
 	private TUI tui;
+	private InputHandler ih;
 	
 	public TUIController(Player player) {
 		super(player);
@@ -22,7 +23,7 @@ public class TUIController extends Controller {
 	}
 	
 	private void spawnInputHandler() {
-		InputHandler ih = new InputHandler();
+		ih = new InputHandler();
 		ih.start();
 	}
 
@@ -85,6 +86,8 @@ public class TUIController extends Controller {
 	
 	private class InputHandler extends Thread {
 		
+		private boolean isCloseRequested = false;
+		
 		@Override
 		public void run() {
 			try {
@@ -145,5 +148,10 @@ public class TUIController extends Controller {
 	private static final String CMD_CHAT = "chat";
 	private static final String CMD_INVITE = "invite";
 	private static final String CMD_GETSCOREBOARD = "scoreboard";
+
+	@Override
+	public void close() {
+		ih.isCloseRequested = true;
+	}
 
 }

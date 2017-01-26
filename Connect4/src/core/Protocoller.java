@@ -71,7 +71,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 	private static final String CMD_CHAT = "CHAT";
 	
 	public void close() {
-		ih.close();
+		ih.isCloseRequested = true;
 	}
 
 	private class InputHandler extends Thread {
@@ -82,10 +82,6 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 		public InputHandler() throws IOException {
 			br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			
-		}
-		
-		public void close() {
-			isCloseRequested = true;
 		}
 		
 		@Override

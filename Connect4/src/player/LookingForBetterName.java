@@ -8,8 +8,10 @@ import game.Field;
 
 public class LookingForBetterName extends ComputerPlayer {
 
-	public LookingForBetterName(String username, Chip chip) {
-		super(username, chip);
+	private static final String NAME = "LookingForBetterName";
+	
+	public LookingForBetterName(Chip chip) {
+		super(NAME, chip);
 	}
 
 	@Override
