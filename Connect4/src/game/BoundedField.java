@@ -87,8 +87,8 @@ public class BoundedField extends Field {
 	private boolean trace(Chip c, int startX, int startY, int startZ, int dx, int dy, int dz) {
 		for (int i = 0; i < winLength; i++) {
 			int currX = startX + i * dx;
-			int currY = startY + i * dx;
-			int currZ = startX + i * dx;
+			int currY = startY + i * dy;
+			int currZ = startZ + i * dz;
 			if (currZ < 0 || currZ >= dimZ || !inBounds(currX, currY)) return false;
 			if (board[currX][currY][currZ] != c) return false;
 		}
