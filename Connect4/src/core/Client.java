@@ -17,6 +17,7 @@ public class Client {
 	private Field field;
 	public static boolean exitRequested = false;
 	private View view;
+	private int millis, magicNumber, userID;
 	
 	private enum GameState {
 		UNCONNECTED, IDLE, GAME_TURN, GAME_WAIT;
@@ -56,8 +57,10 @@ public class Client {
 		}
 	}
 
-	protected void welcomed() {
-		
+	protected void welcomed(int userID, int millis, int magicNumber) {
+		this.userID = userID;
+		this.millis = millis;
+		this.magicNumber = magicNumber;
 	}
 
 	public View getView() {
