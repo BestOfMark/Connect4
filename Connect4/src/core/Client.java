@@ -6,7 +6,9 @@ import java.io.IOException;
 import game.BoundedField;
 import game.Chip;
 import game.Field;
+import player.ComputerPlayer;
 import player.HumanPlayer;
+import player.LookingForBetterName;
 import player.Player;
 import ui.Controller;
 import ui.TUIController;
@@ -16,12 +18,12 @@ public class Client {
 
 	private Controller control;
 	private Field field;
-	public static boolean exitRequested = false;
+	private boolean exitRequested = false;
 	private View view;
-	private int millis, magicnumber;
+	private int millis, serverMagicNumber;
 	private static final int MAGIC_NUMBER = 00; 
-	private Player local, enemy;
-	
+	private Player local, enemy, dumbAi;
+	private Protocoller protocoller;
 	
 	private enum GameState {
 		UNCONNECTED, IDLE, GAME_TURN, GAME_WAIT, CONNECTED;
@@ -33,6 +35,7 @@ public class Client {
 		local = new HumanPlayer("testUser", Chip.RED);
 		control = new TUIController(local);
 		view = control.getView();
+		dumbAi = new LookingForBetterName(local.chip);
 	}
 
 	private void runtimeLoop() {
@@ -43,34 +46,46 @@ public class Client {
 				if (address != null) {
 					view.internalMessage("Obtained address " + address);
 					try {
-						Protocoller protocoller = new Protocoller(this, address);
-						protocoller.cmdHello(local.username, local instanceof player.ComputerPlayer, MAGIC_NUMBER);
+						protocoller = new Protocoller(this, address);
+						try {
+							protocoller.cmdHello(local.username, local instanceof ComputerPlayer, MAGIC_NUMBER);
+							state = GameState.IDLE;
+						} catch (IOException e) {
+							view.internalMessage("Hello command failed");
+						}
 					} catch (MalFormedServerAddressException e) {
 						view.internalMessage(e.getMessage());
-						e.printStackTrace();
 					} catch (ServerNotFoundException e) {
 						view.internalMessage(e.getMessage());
-						e.printStackTrace();
 					} catch (ServerCommunicationException e) {
 						view.internalMessage(e.getMessage());
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
 				break;
-			case CONNECTED:
-				
-				break;
 			case IDLE:
+				break;
+			case CONNECTED:
 				break;
 			case GAME_TURN:
 				Point p = control.requestMove(field.deepCopy());
 				if (p != null) {
 					view.internalMessage("Obtained move " + p.toString());
 				}
-				state = GameState.GAME_WAIT;
+				if (!field.inBounds(p.x, p.y) || field.columnFull(p.x, p.y)) {
+					if (local instanceof ComputerPlayer) {
+						p = new Point(0,0);
+					} else {
+						view.internalMessage("Invalid move");
+						break;
+					}
+				}
+				try {
+					protocoller.cmdMove(p.x, p.y);
+				} catch (IOException e) {
+					view.internalMessage("Error while sending move");
+					protocoller.close();
+					state = GameState.UNCONNECTED;
+				}
 				break;
 			case GAME_WAIT:
 				break;
@@ -80,6 +95,8 @@ public class Client {
 
 	protected void welcomed(int userID, int millis, int magicNumber) {
 		this.millis = millis;
+		local.setId(userID);
+		serverMagicNumber = magicNumber;
 		state = GameState.CONNECTED;
 	}
 	
@@ -100,7 +117,7 @@ public class Client {
 
 	public void illegalMove(String input) {
 		view.internalMessage(input);
-		if (local instanceof player.HumanPlayer){state = GameState.GAME_TURN;}
+		if (local instanceof HumanPlayer){state = GameState.GAME_TURN;}
 		else {
 			state = GameState.UNCONNECTED;
 		}
@@ -123,6 +140,15 @@ public class Client {
 
 	public View getView() {
 		return view;
+	}
+
+	public void shutdown() {
+		protocoller.close();
+		exitRequested = true;
+	}
+	
+	public Protocoller getProtocoller() {
+		return protocoller;
 	}
 
 	public static void main(String[] args) {
