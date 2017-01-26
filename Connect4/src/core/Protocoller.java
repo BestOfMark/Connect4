@@ -2,8 +2,10 @@ package core;
 
 import java.awt.Point;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import core.protocol.ChatCapabilityClient;
 import core.protocol.Connect4Client;
@@ -14,9 +16,10 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 	private final String address;
 	private final int port;
 	private final Socket sock;
+	private BufferedWriter bw;
 	
 	//@ requires client != null;
-	public Protocoller(Client client, String addressAndPort) throws MalFormedServerAddressException, ServerNotFoundException {
+	public Protocoller(Client client, String addressAndPort) throws MalFormedServerAddressException, ServerNotFoundException, ServerCommunicationException {
 		this.client = client;
 		try {
 			String[] parts = addressAndPort.split(":");
@@ -30,7 +33,20 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 		} catch (IOException e) {
 			throw new ServerNotFoundException(address, port);
 		}
-		new InputHandler().start();
+		try {
+			new InputHandler().start();
+		} catch (IOException e) {
+//			System.err.println("Error while getting inputStream from the socket");
+			System.err.println(e.getMessage());
+			throw new ServerCommunicationException("Communication from the server is not possible");
+		}
+		try {
+			bw = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+		} catch (IOException e) {
+//			System.err.println("Error while getting outputStream from the socket");
+			System.err.println(e.getMessage());
+			throw new ServerCommunicationException("Communication to the server is not possible");
+		}
 	}
 
 	@Override
@@ -44,19 +60,18 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void close() {
+		
+	}
 
 	private class InputHandler extends Thread {
 		
 		private BufferedReader br;
 		
-		public InputHandler() {
-			try {
-				br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-			} catch (IOException e) {
-				System.err.println("Error while getting inputStream from the server");
-				System.err.println(e.getMessage());
-				System.err.println("Communication from the ");
-			}
+		public InputHandler() throws IOException {
+			br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+			
 		}
 		
 		@Override
@@ -73,7 +88,12 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 					}
 				}
 			} catch (IOException e) {
-				new InputHandler().start();
+				client.getView().internalMessage("Error in Protocol.InputHandler. Trying to restore...");
+				try {
+					new InputHandler().start();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
