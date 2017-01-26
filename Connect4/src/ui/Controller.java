@@ -15,10 +15,11 @@ public abstract class Controller {
 	protected static final int TIMEOUT = 60000;
 	protected Point move;
 	protected String address;
-	
+	protected String playerID;
 	protected ReentrantLock inputWaiterLock = new ReentrantLock();
 	protected Condition addressEntered = inputWaiterLock.newCondition();
 	protected Condition moveGiven = inputWaiterLock.newCondition();
+	protected Condition playerIDEntered = inputWaiterLock.newCondition();
 	
 	public Controller(Player player) {
 		this.player = player;
@@ -28,6 +29,8 @@ public abstract class Controller {
 	public abstract Point requestMove(Field f);
 	
 	public abstract String requestAddress();
+	
+	public abstract String requestPlayerID();
 
 	public void setMove(Point move) {
 		this.move = move;

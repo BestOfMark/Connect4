@@ -69,6 +69,20 @@ public class TUIController extends Controller {
 		
 	}
 	
+	@Override
+	public String requestPlayerID() {
+		 view.internalMessage("Please input the ip-address of the desired opponent");
+		 try {
+			 playerIDEntered.await(10, TimeUnit.SECONDS);
+			 return playerID;
+		 } catch(InterruptedException e) {
+			System.err.println("Interrupted while waiting for player to input server address.");
+			System.err.println(e.getMessage());
+			System.err.println("Returning null");
+		 }
+		return null;
+	}
+	
 	private class InputHandler extends Thread {
 		
 		@Override
@@ -111,17 +125,25 @@ public class TUIController extends Controller {
 						move = new Point(x,y);
 						moveGiven.signal();
 					}
+				} else if (input.startsWith(CMD_CHAT)) {
+					view.internalMessage("Yet to implement");
+				} else if (input.startsWith(CMD_INVITE)) {
+					view.internalMessage("Yet to implement");
+				} else if (input.startsWith(CMD_GETSCOREBOARD)) {
+					view.internalMessage("Yet to implement");
 				} else {
 					System.out.println("Unknown command");
 				}
 			} finally {
 				inputWaiterLock.unlock();
 			}
-		} else {
-			//Chat
 		}
 	}
 	
 	private static final String CMD_ADDRESS = "address";
 	private static final String CMD_MOVE = "move";
+	private static final String CMD_CHAT = "chat";
+	private static final String CMD_INVITE = "invite";
+	private static final String CMD_GETSCOREBOARD = "scoreboard";
+
 }
