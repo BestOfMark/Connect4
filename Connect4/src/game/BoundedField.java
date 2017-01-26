@@ -120,4 +120,14 @@ public class BoundedField extends Field {
 		}
 		return sb.toString();
 	}
+
+	@Override
+	public boolean checkFull() {
+		for (int x = 0; x < dimX; x++) {
+			for (int y = 0; y < dimY; y++) {
+				if (!columnFull(x, y)) return false;
+			}
+		}
+		return true;
+	}
 }

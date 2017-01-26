@@ -83,6 +83,13 @@ public abstract class Field extends Observable {
 	/*@ pure */ abstract public boolean checkWin(Chip c);
 	
 	/**
+	 * Check if the field is full, i.e. no more chips can be added to any row.
+	 * @return <code>true</code> if no more chips can be added anymore, <code>
+	 * false</code> otherwise.
+	 */
+	/*@ pure */ abstract public boolean checkFull();
+	
+	/**
 	 * Returns an unlinked copy of the field. Changing the state of the copy will not change the
 	 * state of the original.
 	 * @return a copy of the field.
