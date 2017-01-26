@@ -1,6 +1,7 @@
 package core;
 
 import java.awt.Point;
+import java.io.IOException;
 
 import game.BoundedField;
 import game.Chip;
@@ -17,12 +18,13 @@ public class Client {
 	private Field field;
 	public static boolean exitRequested = false;
 	private View view;
-	private int millis, magicNumber, userID;
+	private int millis, magicnumber;
+	private static final int MAGIC_NUMBER = 00; 
 	private Player local, enemy;
 	
 	
 	private enum GameState {
-		UNCONNECTED, IDLE, GAME_TURN, GAME_WAIT;
+		UNCONNECTED, IDLE, GAME_TURN, GAME_WAIT, CONNECTED;
 	}
 	
 	private GameState state = GameState.UNCONNECTED;
@@ -42,17 +44,24 @@ public class Client {
 					view.internalMessage("Obtained address " + address);
 					try {
 						Protocoller protocoller = new Protocoller(this, address);
+						protocoller.cmdHello(local.username, local instanceof player.ComputerPlayer, MAGIC_NUMBER);
 					} catch (MalFormedServerAddressException e) {
-						// TODO Auto-generated catch block
+						view.internalMessage(e.getMessage());
 						e.printStackTrace();
 					} catch (ServerNotFoundException e) {
-						// TODO Auto-generated catch block
+						view.internalMessage(e.getMessage());
 						e.printStackTrace();
 					} catch (ServerCommunicationException e) {
+						view.internalMessage(e.getMessage());
+						e.printStackTrace();
+					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
+				break;
+			case CONNECTED:
+				
 				break;
 			case IDLE:
 				break;
@@ -70,19 +79,17 @@ public class Client {
 	}
 
 	protected void welcomed(int userID, int millis, int magicNumber) {
-		this.userID = userID;
 		this.millis = millis;
-		this.magicNumber = magicNumber;
-		state = GameState.IDLE;
+		state = GameState.CONNECTED;
 	}
 	
 	protected void newGame(String enemyName, int enemyID, int boardSizeX, int boardSizeY, int boardSizeZ, int startingPlayer, int winLength) {
 		enemy = new HumanPlayer(enemyName, local.chip.other());
 		field = new BoundedField(boardSizeX, boardSizeY, boardSizeZ, winLength);
-		if (startingPlayer == userID) {
-			state = GameState.GAME_TURN;
+		if (startingPlayer == enemyID) {
+			state = GameState.GAME_WAIT;
 		} else {
-			state = GameState.GAME_WAIT; 			
+			state = GameState.GAME_TURN; 			
 		}
 	}
 	
