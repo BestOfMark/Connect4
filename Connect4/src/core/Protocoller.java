@@ -48,18 +48,27 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 			throw new ServerCommunicationException("Communication to the server is not possible");
 		}
 	}
+	
+	@Override
+	public void cmdHello(String username, boolean isAi, int clientCapabilities) throws IOException {
+		bw.write(String.join(CMD_DELIMITER, CMD_HELLO, username, String.valueOf(isAi), String.valueOf(clientCapabilities)));
+	}
 
 	@Override
-	public void cmdMove(int x, int y) {
-		// TODO Auto-generated method stub
+	public void cmdMove(int x, int y) throws IOException {
+		bw.write(String.join(CMD_DELIMITER, CMD_MOVE, String.valueOf(x), String.valueOf(y)));
 		
 	}
 
 	@Override
-	public void cmdChat(int recipientID, String msg) {
-		// TODO Auto-generated method stub
-		
+	public void cmdChat(int recipientID, String msg) throws IOException {
+		bw.write(String.join(CMD_DELIMITER, CMD_CHAT, String.valueOf(recipientID), msg));
 	}
+	
+	private static final String CMD_DELIMITER = " ";
+	private static final String CMD_HELLO = "HELLO";
+	private static final String CMD_MOVE = "MOVE";
+	private static final String CMD_CHAT = "CHAT";
 	
 	public void close() {
 		

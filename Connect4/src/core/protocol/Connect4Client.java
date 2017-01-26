@@ -1,5 +1,7 @@
 package core.protocol;
 
+import java.io.IOException;
+
 public interface Connect4Client {
 
 	/**
@@ -12,7 +14,7 @@ public interface Connect4Client {
 	 * for the associated capability.
 	 * @param isAI <code>true</code> indicates that the user that is registering is a computer player. <code>false</code> indicates a human player.
 	 */
-	
+	public void cmdHello(String username, boolean isAi, int clientCapabilities) throws IOException;
 	
 	/** 
 	 * The x and y coordinate of the desired move. The coordinate system is defined as follows: <br>
@@ -29,5 +31,5 @@ public interface Connect4Client {
 	 * @param x the x coordinate of the move
 	 * @param y the y coordinate of the move
 	 */
-	public void cmdMove(int x, int y);
+	public void cmdMove(int x, int y) throws IOException;
 }

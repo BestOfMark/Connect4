@@ -1,5 +1,7 @@
 package core.protocol;
 
+import java.io.IOException;
+
 public interface ChatCapabilityClient {
 
 	/**
@@ -8,5 +10,5 @@ public interface ChatCapabilityClient {
 	 * @param recipientID the server-generated id to whom the message should be sent to. To send to
 	 * everyone use -1.
 	 */
-	public void cmdChat(int recipientID, String msg);
+	public void cmdChat(int recipientID, String msg) throws IOException;
 }
