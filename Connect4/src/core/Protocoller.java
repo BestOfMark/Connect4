@@ -1,6 +1,5 @@
 package core;
 
-import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -17,6 +16,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 	private final int port;
 	private final Socket sock;
 	private BufferedWriter bw;
+	private InputHandler ih;
 	
 	//@ requires client != null;
 	public Protocoller(Client client, String addressAndPort) throws MalFormedServerAddressException, ServerNotFoundException, ServerCommunicationException {
@@ -34,7 +34,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 			throw new ServerNotFoundException(address, port);
 		}
 		try {
-			new InputHandler().start();
+			(ih = new InputHandler()).start();
 		} catch (IOException e) {
 //			System.err.println("Error while getting inputStream from the socket");
 			System.err.println(e.getMessage());
@@ -71,23 +71,28 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 	private static final String CMD_CHAT = "CHAT";
 	
 	public void close() {
-		
+		ih.close();
 	}
 
 	private class InputHandler extends Thread {
 		
 		private BufferedReader br;
+		private boolean isCloseRequested = false;
 		
 		public InputHandler() throws IOException {
 			br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			
 		}
 		
+		public void close() {
+			isCloseRequested = true;
+		}
+		
 		@Override
 		public void run() {
 			try {
 				String input;
-				while ((input = br.readLine()) != null) {
+				while (!isCloseRequested && (input = br.readLine()) != null) {
 					client.getView().internalMessage("input from server received: " + input);
 					try {
 						parse(input);
@@ -99,7 +104,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 			} catch (IOException e) {
 				client.getView().internalMessage("Error in Protocol.InputHandler. Trying to restore...");
 				try {
-					new InputHandler().start();
+					(ih = new InputHandler()).start();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
