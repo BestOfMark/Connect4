@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import client.player.ComputerPlayer;
 import client.player.HumanPlayer;
-import client.player.LookingForBetterName;
 import client.player.Player;
 import client.ui.Controller;
 import client.ui.TUIController;
@@ -20,9 +19,8 @@ public class Client {
 	private Field field;
 	private boolean exitRequested = false;
 	private View view;
-	private int millis, serverMagicNumber;
 	private static final int MAGIC_NUMBER = 00; 
-	private Player local, enemy, dumbAi;
+	private Player local, enemy;
 	private Protocoller protocoller;
 	
 	private enum GameState {
@@ -35,7 +33,6 @@ public class Client {
 		local = new HumanPlayer("testUser", Chip.RED);
 		control = new TUIController(local);
 		view = control.getView();
-		dumbAi = new LookingForBetterName(local.chip);
 	}
 
 	private void runtimeLoop() {
@@ -70,6 +67,10 @@ public class Client {
 				Point p = control.requestMove(field.deepCopy());
 				if (p != null) {
 					view.internalMessage("Obtained move " + p.toString());
+				} else {
+					view.internalMessage("Turn timed out");
+					
+					break;
 				}
 				if (!field.inBounds(p.x, p.y) || field.columnFull(p.x, p.y)) {
 					if (local instanceof ComputerPlayer) {
@@ -94,9 +95,8 @@ public class Client {
 	}
 
 	protected void welcomed(int userID, int millis, int magicNumber) {
-		this.millis = millis;
+		control.setTimeout(millis);
 		local.setId(userID);
-		serverMagicNumber = magicNumber;
 		state = GameState.CONNECTED;
 	}
 	
@@ -166,6 +166,10 @@ public class Client {
 	
 	public Protocoller getProtocoller() {
 		return protocoller;
+	}
+	
+	public void exit() {
+		
 	}
 
 	public static void main(String[] args) {
