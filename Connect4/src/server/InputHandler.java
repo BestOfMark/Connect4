@@ -71,6 +71,7 @@ public class InputHandler extends Thread {
 			player.state = PlayerState.ERRORED;
 			System.err.println("The inputhandler of " + player.toString() + " errored");
 		}
+		System.out.println("Closing the inputhandler of " + player.toString());
 	}
 	
 	private static final String EXCEPTION_SOURCE_NAME = "Client";

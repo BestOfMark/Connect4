@@ -10,24 +10,51 @@ import game.Field;
 
 public class HostedGame {
 
+	/**
+	 * Player participating in this game.
+	 */
 	private final NetworkPlayer p1, p2;
+	
+	/**
+	 * Reference to either player 1 or player 2, depending on who has the turn.
+	 */
 	private NetworkPlayer playerWithTurn;
-	private Field field;
 	
-	private static final int DIM_X = 4, DIM_Y = 4, DIM_Z = 4, WIN = 4;
+	/**
+	 * The field on which the game is played.
+	 */
+	private final Field field;
 	
-	public HostedGame(Server server, NetworkPlayer player1, NetworkPlayer player2) {
+	/**
+	 * Create a new game and inform the participants.
+	 * @param server the server on which this game is hosted.
+	 * @param player1 Player 1 participating in this game.
+	 * @param player2 Player 2 participating in this game
+	 * @param dimX the x-dimension of the field used in this game.
+	 * @param dimY the y-dimension of the field used in this game.
+	 * @param dimZ the z-dimension of the field used in this game.
+	 * @param winLength the number of chips in a row needed to win this game.
+	 */
+	public HostedGame(Server server, NetworkPlayer player1, NetworkPlayer player2, int dimX, int dimY, int dimZ, int winLength) {
+		//Initialize the participating players
 		p1 = player1;
 		p2 = player2;
 		p1.chip = Chip.RED;
 		p2.chip = Chip.YELLOW;
+		
+		//Set the game reference in player
 		p1.enroll(this);
 		p2.enroll(this);
-		playerWithTurn = (Math.random() < 0.5D) ? p1 : p2;
-		p1.cmdGame(p2.username, p2.id, DIM_X, DIM_Y, DIM_Z, playerWithTurn.id, WIN);
-		p2.cmdGame(p1.username, p1.id, DIM_X, DIM_Y, DIM_Z, playerWithTurn.id, WIN);
 		
-		field = new BoundedField(DIM_X, DIM_Y, DIM_Z, WIN);
+		//Decide randomly who has the first turn
+		playerWithTurn = (Math.random() < 0.5D) ? p1 : p2;
+		
+		//Inform the clients that a game has started
+		p1.cmdGame(p2.username, p2.id, dimX, dimY, dimZ, playerWithTurn.id, winLength);
+		p2.cmdGame(p1.username, p1.id, dimX, dimY, dimZ, playerWithTurn.id, winLength);
+		
+		//Create the playing field
+		field = new BoundedField(dimX, dimY, dimZ, winLength);
 		
 		System.out.println("New game between" + p1.toString() + " and " + p2.toString());
 	}
