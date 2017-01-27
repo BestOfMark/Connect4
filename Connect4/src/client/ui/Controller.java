@@ -1,17 +1,21 @@
 package client.ui;
 
 import java.awt.Point;
+
+import client.Client;
 import client.player.Player;
 import game.Field;
 
 public abstract class Controller {
 
-	protected final Player player;
+	protected Player player;
 	protected View view;
+	protected final Client client;
 	
 	protected int timeout;
 	
-	public Controller(Player player) {
+	public Controller(Client client, Player player) {
+		this.client = client;
 		this.player = player;
 		player.setController(this);
 	}
@@ -24,12 +28,8 @@ public abstract class Controller {
 
 	public abstract void setMove(Point p);
 
-	protected void setView(View v) {
+	public void setView(View v) {
 		this.view = v;
-	}
-	
-	public View getView() {
-		return view;
 	}
 	
 	public void setTimeout(int millis) {

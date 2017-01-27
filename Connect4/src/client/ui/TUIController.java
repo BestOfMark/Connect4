@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import client.Client;
 import client.player.ComputerPlayer;
 import client.player.Player;
 import game.Field;
@@ -28,10 +29,8 @@ public class TUIController extends Controller {
 	
 	private static final int MESSAGE_FREQUENCY = 30;
 	
-	public TUIController(Player player) {
-		super(player);
-		tui = new TUI(this);
-		setView(tui);
+	public TUIController(Client client, Player player) {
+		super(client, player);
 		spawnInputHandler();
 	}
 	

@@ -3,12 +3,14 @@ package client.ui;
 import java.util.Observable;
 import java.util.concurrent.locks.ReentrantLock;
 
+import client.Client;
+
 public class TUI extends View {
 
 	private final ReentrantLock consoleWriteLock = new ReentrantLock();
 	
-	public TUI(Controller control) {
-		super(control);
+	public TUI(Client client) {
+		super(client);
 	}
 
 	@Override

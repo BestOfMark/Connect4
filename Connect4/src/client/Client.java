@@ -7,6 +7,7 @@ import client.player.ComputerPlayer;
 import client.player.HumanPlayer;
 import client.player.Player;
 import client.ui.Controller;
+import client.ui.TUI;
 import client.ui.TUIController;
 import client.ui.View;
 import game.BoundedField;
@@ -16,11 +17,13 @@ import game.Field;
 public class Client {
 
 	private Controller control;
-	private Field field;
-	private boolean exitRequested = false;
 	private View view;
-	private static final int MAGIC_NUMBER = 00; 
+	
+	private Field field;
 	private Player local, enemy;
+	
+	private boolean exitRequested = false;
+	private static final int MAGIC_NUMBER = 00; 
 	private Protocoller protocoller;
 	
 	private enum GameState {
@@ -31,8 +34,10 @@ public class Client {
 	
 	public Client() {
 		local = new HumanPlayer("testUser", Chip.RED);
-		control = new TUIController(local);
-		view = control.getView();
+		control = new TUIController(this, local);
+		view = new TUI(this);
+		control.setView(view);
+		view.setController(control);
 	}
 
 	private void runtimeLoop() {
