@@ -26,6 +26,8 @@ public class TUIController extends Controller {
 	private String address;
 	private String playerID;
 	
+	private static final int MESSAGE_FREQUENCY = 30;
+	
 	public TUIController(Player player) {
 		super(player);
 		tui = new TUI(this);
@@ -65,7 +67,6 @@ public class TUIController extends Controller {
 		
 	}
 
-	private static final int MESSAGE_FREQUENCY = 30;
 	@Override
 	public String requestAddress() {
 		inputWaiterLock.lock();
@@ -100,7 +101,7 @@ public class TUIController extends Controller {
 	public String requestPlayerID() {
 		 view.internalMessage("Please input the ip-address of the desired opponent");
 		 try {
-			 playerIDEntered.await(10, TimeUnit.SECONDS);
+			 playerIDEntered.await(MESSAGE_FREQUENCY, TimeUnit.SECONDS);
 			 return playerID;
 		 } catch(InterruptedException e) {
 			System.err.println("Interrupted while waiting for player to input server address.");
