@@ -140,6 +140,7 @@ public class TUIController extends Controller {
 				System.err.println("Resetting inputhandler:");
 				spawnInputHandler();
 			}
+			System.out.println("Exiting local input handler");
 		}
 	}
 	
@@ -168,6 +169,8 @@ public class TUIController extends Controller {
 					view.internalMessage("Yet to implement");
 				} else if (input.startsWith(CMD_GETSCOREBOARD)) {
 					view.internalMessage("Yet to implement");
+				} else if (input.equals(CMD_EXIT)) {
+					close();
 				} else {
 					System.out.println("Unknown command");
 				}
@@ -179,6 +182,7 @@ public class TUIController extends Controller {
 	
 	private static final String CMD_ADDRESS = "address";
 	private static final String CMD_MOVE = "move";
+	private static final String CMD_EXIT = "exit";
 	private static final String CMD_CHAT = "chat";
 	private static final String CMD_INVITE = "invite";
 	private static final String CMD_GETSCOREBOARD = "scoreboard";
