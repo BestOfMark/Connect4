@@ -9,7 +9,7 @@ public abstract class Controller {
 	protected final Player player;
 	protected View view;
 	
-	protected static final int TIMEOUT = 60000;
+	protected int timeout;
 	
 	public Controller(Player player) {
 		this.player = player;
@@ -30,6 +30,10 @@ public abstract class Controller {
 	
 	public View getView() {
 		return view;
+	}
+	
+	public void setTimeout(int millis) {
+		timeout = millis;
 	}
 	
 	public abstract void close();

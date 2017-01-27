@@ -44,10 +44,14 @@ public class TUIController extends Controller {
 		inputWaiterLock.lock();
 		try {
 			if (player instanceof ComputerPlayer) {
-				((ComputerPlayer) player).startThinking(f);
+				new Thread(new Runnable() {
+					public void run() {
+						((ComputerPlayer) player).startThinking(f);
+					};
+				}).start();
 			}
 			try {
-				moveGiven.await(60, TimeUnit.SECONDS);
+				moveGiven.await(timeout, TimeUnit.MILLISECONDS);
 				return move;
 			} catch (InterruptedException e) {
 				System.err.println("Interrupted while waiting for player to input move.");
@@ -61,13 +65,14 @@ public class TUIController extends Controller {
 		
 	}
 
+	private static final int MESSAGE_FREQUENCY = 30;
 	@Override
 	public String requestAddress() {
 		inputWaiterLock.lock();
 		try {
 			view.internalMessage("Please input the ip-address of the server");
 			try {
-				addressEntered.await(10, TimeUnit.SECONDS);
+				addressEntered.await(MESSAGE_FREQUENCY, TimeUnit.SECONDS);
 				return address;
 			} catch (InterruptedException e) {
 				System.err.println("Interrupted while waiting for player to input server address.");
