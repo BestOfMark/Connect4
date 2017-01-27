@@ -25,7 +25,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 	public Protocoller(Client client, String addressAndPort) throws MalFormedServerAddressException, ServerNotFoundException, ServerCommunicationException {
 		this.client = client;
 		try {
-			String[] parts = addressAndPort.split(":");
+			String[] parts = addressAndPort.split("[:\\s]");
 			this.address = parts[0];
 			this.port = Integer.parseInt(parts[1]);
 		} catch (Exception e) {

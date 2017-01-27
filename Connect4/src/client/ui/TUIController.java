@@ -48,6 +48,12 @@ public class TUIController extends Controller {
 			if (player instanceof ComputerPlayer) {
 				new Thread(new Runnable() {
 					public void run() {
+						//Wait a bit such that the move is set in this thread after the await() is called in the outer thread
+						try {
+							Thread.sleep(2);
+						} catch (InterruptedException e) {
+							//Oh shit
+						}
 						((ComputerPlayer) player).startThinking(f);
 					};
 				}).start();
@@ -64,7 +70,6 @@ public class TUIController extends Controller {
 		} finally {
 			inputWaiterLock.unlock();
 		}
-		
 	}
 
 	@Override
