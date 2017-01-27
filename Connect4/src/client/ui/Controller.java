@@ -1,9 +1,6 @@
 package client.ui;
 
 import java.awt.Point;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
 import client.player.Player;
 import game.Field;
 
@@ -13,13 +10,6 @@ public abstract class Controller {
 	protected View view;
 	
 	protected static final int TIMEOUT = 60000;
-	protected Point move;
-	protected String address;
-	protected String playerID;
-	protected ReentrantLock inputWaiterLock = new ReentrantLock();
-	protected Condition addressEntered = inputWaiterLock.newCondition();
-	protected Condition moveGiven = inputWaiterLock.newCondition();
-	protected Condition playerIDEntered = inputWaiterLock.newCondition();
 	
 	public Controller(Player player) {
 		this.player = player;
@@ -32,10 +22,7 @@ public abstract class Controller {
 	
 	public abstract String requestPlayerID();
 
-	public void setMove(Point move) {
-		this.move = move;
-		moveGiven.signal();
-	}
+	public abstract void setMove(Point p);
 
 	protected void setView(View v) {
 		this.view = v;

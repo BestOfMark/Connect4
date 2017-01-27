@@ -13,4 +13,6 @@ public abstract class View implements Observer {
 	abstract public void userInput(String input);
 
 	abstract public void internalMessage(String msg);
+	
+	abstract public void chatMessage(String msg);
 }

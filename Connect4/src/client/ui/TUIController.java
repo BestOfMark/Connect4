@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import client.player.ComputerPlayer;
 import client.player.Player;
@@ -14,6 +16,15 @@ public class TUIController extends Controller {
 	
 	private TUI tui;
 	private InputHandler ih;
+	
+	private static ReentrantLock inputWaiterLock = new ReentrantLock();
+	private static Condition addressEntered = inputWaiterLock.newCondition();
+	private static Condition moveGiven = inputWaiterLock.newCondition();
+	private static Condition playerIDEntered = inputWaiterLock.newCondition();
+	
+	private Point move;
+	private String address;
+	private String playerID;
 	
 	public TUIController(Player player) {
 		super(player);
@@ -67,7 +78,17 @@ public class TUIController extends Controller {
 		} finally {
 			inputWaiterLock.unlock();
 		}
-		
+	}
+	
+	@Override
+	synchronized public void setMove(Point move) {
+		inputWaiterLock.lock();
+		try {
+			this.move = move;
+			moveGiven.signal();
+		} finally {
+			inputWaiterLock.unlock();
+		}
 	}
 	
 	@Override
@@ -84,6 +105,11 @@ public class TUIController extends Controller {
 		return null;
 	}
 	
+	@Override
+	public void close() {
+		ih.isCloseRequested = true;
+	}
+	
 	private class InputHandler extends Thread {
 		
 		private boolean isCloseRequested = false;
@@ -93,7 +119,7 @@ public class TUIController extends Controller {
 			try {
 				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				String input;
-				while ((input = br.readLine()) != null) {
+				while (!isCloseRequested && (input = br.readLine()) != null) {
 					view.userInput(input);
 					parse(input);
 				}
@@ -104,9 +130,6 @@ public class TUIController extends Controller {
 				spawnInputHandler();
 			}
 		}
-
-		
-		
 	}
 	
 	private void parse(String input) {
@@ -148,10 +171,4 @@ public class TUIController extends Controller {
 	private static final String CMD_CHAT = "chat";
 	private static final String CMD_INVITE = "invite";
 	private static final String CMD_GETSCOREBOARD = "scoreboard";
-
-	@Override
-	public void close() {
-		ih.isCloseRequested = true;
-	}
-
 }

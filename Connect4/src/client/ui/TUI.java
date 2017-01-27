@@ -21,7 +21,7 @@ public class TUI extends View {
 	public void userInput(String input) {
 		consoleWriteLock.lock();
 		try {
-			System.out.println("INPUT:" + input);
+			System.out.println("INPUT: " + input);
 		} finally {
 			consoleWriteLock.unlock();
 		}
@@ -32,6 +32,16 @@ public class TUI extends View {
 		consoleWriteLock.lock();
 		try {
 			System.out.println("CLIENT: " + msg);
+		} finally {
+			consoleWriteLock.unlock();
+		}
+	}
+
+	@Override
+	public void chatMessage(String msg) {
+		consoleWriteLock.lock();
+		try {
+			System.out.println("CHAT: " + msg);
 		} finally {
 			consoleWriteLock.unlock();
 		}
