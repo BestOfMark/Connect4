@@ -169,7 +169,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 			}
 		} else if (input.startsWith(SERVER_ILLEGAL)) {
 			input = input.substring(SERVER_ILLEGAL.length()).trim();
-			client.illegalMove(input);
+			client.illegalCommand(input);
 		} else if (input.startsWith(SERVER_CHAT_MSG)) {
 			input = input.substring(SERVER_CHAT_MSG.length()).trim();
 			String[] args = input.split("[\\s,]+");

@@ -110,16 +110,18 @@ public class Client {
 		}
 	}
 	
-	public void chatReceived(int parseInt, String string) {
-		// TODO Auto-generated method stub
-		
+	public void chatReceived(int sendId, String msg) {
+		if (sendId == enemy.getId()) {
+			view.chatMessage(enemy.username + ": " + msg);
+		} else {
+			view.chatMessage(sendId + ": " + msg);
+		}
 	}
 
-	public void illegalMove(String input) {
+	public void illegalCommand(String input) {
 		view.internalMessage(input);
-		if (local instanceof HumanPlayer){state = GameState.GAME_TURN;}
-		else {
-			state = GameState.UNCONNECTED;
+		if (input.contains(Protocoller.CLIENT_MOVE)) {
+			if (local instanceof ComputerPlayer) state = GameState.UNCONNECTED;
 		}
 	}
 
@@ -128,14 +130,29 @@ public class Client {
 		state = GameState.IDLE;
 	}
 
-	public void gameOver(int parseInt) {
-		// TODO Auto-generated method stub
-		
+	public void gameOver(int id) {
+		if (id == local.getId()) {
+			view.internalMessage("You have won the game");
+		} else if (id == enemy.getId()) {
+			view.internalMessage("You have lost the game");
+		} else if (id == -1) {
+			view.internalMessage("The game has ended in a tie");
+		} else {
+			view.internalMessage("Weird ID received");			
+		}
+		state = GameState.CONNECTED;
 	}
 
-	public void receivedMove(int parseInt, int parseInt2, int parseInt3, int parseInt4) {
-		// TODO Auto-generated method stub
-		
+	public void receivedMove(int x, int y, int moveId, int nextId) {
+		if (moveId == local.getId()) {
+			field.addChip(local.chip, x, y);
+			state = GameState.GAME_WAIT;
+		} else if (moveId == enemy.getId()) {
+			field.addChip(enemy.chip, x, y);
+			state = GameState.GAME_TURN;
+		} else if (moveId != local.getId() && moveId != enemy.getId()) {
+			state = GameState.UNCONNECTED;
+		}
 	}
 
 	public View getView() {
