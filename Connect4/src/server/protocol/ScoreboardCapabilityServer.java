@@ -1,4 +1,4 @@
-package client.protocol;
+package server.protocol;
 
 public interface ScoreboardCapabilityServer {
 
