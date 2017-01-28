@@ -26,6 +26,7 @@ public class Server {
 	 * This variable keeps track of which id is available for a new client/user. Every time a new client connects 
 	 * he is given this id and afterwards the value is incremented by one.
 	 */
+	//@ invariant connectedPlayers.size == idCount;
 	private int idCount = 0;
 	
 	/**
@@ -68,7 +69,7 @@ public class Server {
 	 */
 	//@ requires requester != null;
 	//@ ensures \result != requester;
-	private NetworkPlayer getAvailableOpponent(NetworkPlayer requester) {
+	/*@ pure */ private NetworkPlayer getAvailableOpponent(NetworkPlayer requester) {
 		/* The list of connected players will be iterated over randomly. For this purpose a random permutation of size idCount is
 		 * created. This corresponds to the number of connected players.*/
 		int[] randperm = randperm(idCount);
@@ -94,7 +95,7 @@ public class Server {
 	 */
 	//@ requires size >= 0;
 	//@ ensures \result.length == size;
-	private static int[] randperm(int size) {
+	/*@ pure */ private static int[] randperm(int size) {
 		//Fill a list with integers from 0 to size-1
 		ArrayList<Integer> availableInts = new ArrayList<>();
 		for (int i = 0; i < size; i++) {
@@ -135,7 +136,7 @@ public class Server {
 		private ServerSocket ss;
 		
 		/**
-		 * If variable is set to <code>true</code> then the <code>run()</code> method will break from the <code>while</code>-loop in the next iteration.
+		 * If this variable is set to <code>true</code> then the <code>run()</code> method will break from the <code>while</code>-loop in the next iteration.
 		 * Consequently, the <code>Porter</code> thread finishes and the server will no longer listen for new connections.
 		 */
 		private boolean isCloseRequested = false;
@@ -178,6 +179,8 @@ public class Server {
 	}
 
 	private static final int DIM_X = 4, DIM_Y = 4, DIM_Z = 4, WIN = 4;
+	private static final int THINK_TIME = 60000;
+	private static final int MAGIC_NUMBER = 0;
 	/**
 	 * Called when the <code>InputHandler</code> of a <code>NetworkPlayer</code> receives a <b>HELLO</b> command.
 	 * @param player the <code>NetworkPlayer</code> from which this command originated.
@@ -187,6 +190,8 @@ public class Server {
 	 */
 	public void hello(NetworkPlayer player, String username, boolean isAI, int magicNumber) {
 		player.username = username;
+		player.cmdWelcome(player.id, THINK_TIME, MAGIC_NUMBER);
+		player.state = PlayerState.IDLE;
 		
 		//Looking for an opponent
 		NetworkPlayer opponent = getAvailableOpponent(player);

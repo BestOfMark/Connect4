@@ -4,7 +4,6 @@ public interface Connect4Server {
 
 	/**
 	 * Response to a valid HELLO command from a client
-	 * 
 	 * @param assignedUserID this is the unique identifier the server assigned to the client who receives this WELCOME command.
 	 * @param allowedThinkTime the time the client has to send a valid response to the server in milliseconds.
 	 * If the client does not respond in time the server will decide what to do next (this depends on the implementing server).
@@ -34,7 +33,7 @@ public interface Connect4Server {
 	 * @param moveX the x coordinate where a chip should be placed on top
 	 * @param moveY the y coordinate where a chip should be placed on top
 	 * @param actorID the ID of the player who made the move
-	 * @param playerWhoHasNextTurnID the ID 
+	 * @param playerWhoHasNextTurnID the ID of the player who has the next turn
 	 */
 	public void cmdMoveSuccess(int moveX, int moveY, int actorID, int playerWhoHasNextTurnID);
 	

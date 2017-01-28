@@ -59,16 +59,41 @@ public class HostedGame {
 		System.out.println("New game between" + p1.toString() + " and " + p2.toString());
 	}
 	
-	public NetworkPlayer getOpponent(NetworkPlayer inquirer) {
+	/**
+	 * Find the player who is the opponent of the player passed in the argument
+	 * @param inquirer the player whose opponent is returned
+	 * @return the other player in this <code>HostedGame</code>
+	 */
+	//@ requires inquirer != null;
+	//@ ensures \return != null && \return != inquirer;
+	/*@ pure */ public NetworkPlayer getOpponent(NetworkPlayer inquirer) {
 		return (p1.equals(inquirer)) ? p2 : p1;
 	}
 
 	private final ReentrantLock lock = new ReentrantLock();
+	
+	/**
+	 * Process a move received from one of the clients in this <code>HostedGame</code>. If the move is valid - i.e. the player who made 
+	 * it has the turn <b>and</b> the chip can be added to the field - the field is updated and both connected players are notified. After
+	 * every move the method checks if the player has won or if the field is full and sends the GAME_END command to the players accordingly.
+	 * @param player the player from whom the command originates
+	 * @param x the x-coordinate of the desired move
+	 * @param y the y-coordinate of the desired move
+	 */
+	//@ requires player != null;
 	synchronized public void moveReceived(NetworkPlayer player, int x, int y) {
+		//In the case of two simultaneous commands, make sure it is executed sequentially.
 		lock.lock();
 		try {
-			if (field.inBounds(x, y) && !field.columnFull(x, y)) {
+			//Check if the move is legal
+			if (player.equals(playerWithTurn) && field.inBounds(x, y) && !field.columnFull(x, y)) {
+				//Legal move
 				field.addChip(player.chip, x, y);
+				playerWithTurn = getOpponent(player);
+				p1.cmdMoveSuccess(x, y, player.id, playerWithTurn.id);
+				p2.cmdMoveSuccess(x, y, player.id, playerWithTurn.id);
+				
+				//Check for game over
 				if (field.checkWin(player.chip)) {
 					p1.cmdGameEnd(player.id);
 					p2.cmdGameEnd(player.id);
@@ -77,12 +102,9 @@ public class HostedGame {
 					p1.cmdGameEnd(-1);
 					p2.cmdGameEnd(-1);
 					endGame();
-				} else {
-					playerWithTurn = getOpponent(player);
-					p1.cmdMoveSuccess(x, y, player.id, playerWithTurn.id);
-					p2.cmdMoveSuccess(x, y, player.id, playerWithTurn.id);
 				}
 			} else {
+				//Illegal move. Add a transgression
 				player.cmdReportIllegal(String.join(COMMAND_DELIMITER, SERVER_ILLEGAL, CLIENT_MOVE, String.valueOf(x), String.valueOf(y)));
 				player.newTransgression();
 			}
@@ -91,14 +113,24 @@ public class HostedGame {
 		}
 	}
 
+	/**
+	 * Reset the states of the players, only if they have not been banned or errored.
+	 */
 	private void endGame() {
-		if (p1.state == PlayerState.IN_GAME) p1.state = PlayerState.IDLE;
-		if (p2.state == PlayerState.IN_GAME) p2.state = PlayerState.IDLE;
+		if (p1.state == PlayerState.IN_GAME) p1.disenroll(this);
+		if (p2.state == PlayerState.IN_GAME) p2.disenroll(this);
 		System.out.println("Game ended between " + p1.toString() + " and " + p2.toString());
 	}
 
-	public void playerBanned(NetworkPlayer player, String reason) {
+	/**
+	 * Notify the opponent when a player has been banned
+	 * @param player the player who is banned
+	 * @param reason the reason of the ban. This is sent to the opponent
+	 */
+	//@ requires player != null;
+	public void playerLeft(NetworkPlayer player, String reason) {
 		NetworkPlayer other = getOpponent(player);
 		other.cmdPlayerLeft(player.id, reason);
+		other.cmdGameEnd(other.id);
 	}
 }

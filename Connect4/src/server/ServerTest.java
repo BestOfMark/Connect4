@@ -61,6 +61,7 @@ public class ServerTest {
 				while ((line = br.readLine()) != null) {
 					System.out.println("ECHO: " + line);
 					bw.write(line);
+					bw.newLine();
 					bw.flush();
 				}
 			} catch (IOException e) {
