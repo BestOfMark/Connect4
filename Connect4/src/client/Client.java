@@ -16,20 +16,59 @@ import game.Field;
 
 public class Client {
 
+	/**
+	 * Stores the <code>Controller</code> object used by the <code>Client</code>.
+	 */
 	private Controller control;
+	
+	/**
+	 * Stores the <code>View</code> object used by the <code>Client</code> 
+	 */
 	private View view;
 	
+	/**
+	 * Stores the <code>Field</code> object received by the server.
+	 */
 	private Field field;
-	private Player local, enemy;
 	
+	/**
+	 * Stores the <code>Player</code> of the local player.
+	 */
+	private Player local;
+	
+	/**
+	 * Stores the <code>Player</code> of the opponent.
+	 */
+	private Player enemy;
+	
+	/**
+	 * If this variable is set to <code>true</code> it will break the while runtimeloop in the <code>Client</code>, leading to the
+	 * termination of the client.
+	 */
 	private boolean exitRequested = false;
-	private static final int MAGIC_NUMBER = 00; 
+	
+	/**
+	 * Contains the supported features of the <code>Client</code>.
+	 */
+	private static final int MAGIC_NUMBER = 00;
+	
+	/**
+	 * Stores the <code>Protocoller</code> used by this <code>Client</code>.
+	 */
 	private Protocoller protocoller;
 	
+	/**
+	 * 
+	 * This <code>enum</code> provides all the possible states used by the <code>Client</code>. 
+	 *
+	 */
 	private enum GameState {
 		UNCONNECTED, IDLE, GAME_TURN, GAME_WAIT, CONNECTED, SHUTDOWN;
 	}
 	
+	/**
+	 * The state used to define the current state of the <code>Client</code>.
+	 */
 	private GameState state = GameState.UNCONNECTED;
 	
 	/**
