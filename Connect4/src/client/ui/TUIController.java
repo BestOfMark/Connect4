@@ -9,6 +9,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import client.Client;
+import client.Protocoller;
 import client.player.ComputerPlayer;
 import client.player.Player;
 import game.Field;
@@ -27,16 +28,24 @@ public class TUIController extends Controller {
 	private String address;
 	private String playerID;
 	
-	private static final int MESSAGE_FREQUENCY = 30;
+	private static final int MESSAGE_FREQUENCY = 10;
 	
+	/**
+	 * Calls the constructor of Controller and creates and inputHandler.
+	 * @param client specifies the client of the controller
+	 * @param player specifies the player of the controller
+	 */
+	//@ requires client != 0; player != 0;
 	public TUIController(Client client, Player player) {
 		super(client, player);
 		spawnInputHandler();
 	}
-	
+	/**
+	 * Creates and starts a new inputHandler
+	 */
 	private void spawnInputHandler() {
-		ih = new InputHandler();
-		ih.start();
+			ih = new InputHandler();
+			ih.start();
 	}
 
 	@Override
@@ -108,7 +117,7 @@ public class TUIController extends Controller {
 			 playerIDEntered.await(MESSAGE_FREQUENCY, TimeUnit.SECONDS);
 			 return playerID;
 		 } catch(InterruptedException e) {
-			System.err.println("Interrupted while waiting for player to input server address.");
+			System.err.println("Interrupted while waiting for player to input the playerID");
 			System.err.println(e.getMessage());
 			System.err.println("Returning null");
 		 }
@@ -118,6 +127,7 @@ public class TUIController extends Controller {
 	@Override
 	public void close() {
 		ih.isCloseRequested = true;
+		client.shutdown();
 	}
 	
 	private class InputHandler extends Thread {
@@ -143,6 +153,18 @@ public class TUIController extends Controller {
 		}
 	}
 	
+	/**
+	 * This method is called when input has been received by the TUI from the player. If the input starts with \ it will scan input for
+	 * the commands address, move, exit, chat, invite and scoreboard. After specifying the command it will take the remainder of the string
+	 * to execute the command. If the command address is used it will retrieve the IP-address and port of the server. 
+	 * If the command move is used it will retrieve the point entered and call the move method or it will return an error if the
+	 * command was used in an invalid way.
+	 * if the command exit is used it will tell all processes that are going on to terminate.
+	 * if the command chat is used it will send the input string to one specific user or to all users
+	 * if the command invite is used it will invite the specified user in the lobby.
+	 * if the command scoreboard is used it will retrieve the scoreboard of the server. 
+	 * @param input A String that was received and contains a command.
+	 */
 	private void parse(String input) {
 		if (input.startsWith("\\")) {
 			input = input.substring(1).toLowerCase();
@@ -163,12 +185,17 @@ public class TUIController extends Controller {
 						moveGiven.signal();
 					}
 				} else if (input.startsWith(CMD_CHAT)) {
-					view.internalMessage("Yet to implement");
+					try {
+						client.getProtocoller().cmdChat(1, input);
+					} catch (IOException e) {
+						System.err.println("Error while parsing CHAT");
+					}
 				} else if (input.startsWith(CMD_INVITE)) {
 					view.internalMessage("Yet to implement");
 				} else if (input.startsWith(CMD_GETSCOREBOARD)) {
 					view.internalMessage("Yet to implement");
 				} else if (input.equals(CMD_EXIT)) {
+					System.out.println("Trying to close");
 					close();
 				} else {
 					System.out.println("Unknown command");
