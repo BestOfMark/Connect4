@@ -18,8 +18,9 @@ public abstract class Field extends Observable {
 	 * @param sizeY the y dimension of the field, also known as the depth.
 	 * @param sizeZ the z dimension of the field, also known as the height. For infinite field 
 	 * height this should be <code>-1</code>.
+	 * @param winLength specifies the amount of chips in one line needed to win the game.
 	 */
-	//@ requires sizeX > 0; sizeY > 0; sizeZ > 0;
+	//@ requires sizeX > 0; sizeY > 0; sizeZ > 0; winLength > 1;
 	protected Field(int sizeX, int sizeY, int sizeZ, int winLength) {
 		dimX = sizeX; 
 		dimY = sizeY;

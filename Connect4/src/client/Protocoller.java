@@ -21,6 +21,15 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 	
 	public static final String COMMAND_DELIMITER = " ";
 	
+	/**
+	 * Tries to set up a connection with a server specified in the <code>String</code> addressAndPort. If the server exists and responds it will
+	 * setup and InputHandler and BufferedWriter.
+	 * @param client The <code>client</code> object that utilizes this <code>Protocoller</code>.
+	 * @param addressAndPort a <code>String<code> containing the address and port number of a server.
+	 * @throws MalFormedServerAddressException
+	 * @throws ServerNotFoundException
+	 * @throws ServerCommunicationException
+	 */
 	//@ requires client != null;
 	public Protocoller(Client client, String addressAndPort) throws MalFormedServerAddressException, ServerNotFoundException, ServerCommunicationException {
 		this.client = client;
@@ -72,8 +81,16 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 	public static final String CLIENT_MOVE = "MOVE";
 	public static final String CLIENT_CHAT = "CHAT";
 	
+	/**
+	 * Closes the communication with the server.
+	 */
 	public void close() {
 		ih.isCloseRequested = true;
+		try {
+			sock.close();
+		} catch (IOException e) {
+			client.getView().internalMessage(e.getMessage());
+		}
 	}
 
 	private class InputHandler extends Thread {
@@ -86,6 +103,9 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 			
 		}
 		
+		/**
+		 * Listens to input from the server. This function will only return when <code>isCloseRequested</code> is set to <code>true</code>;
+		 */
 		@Override
 		public void run() {
 			try {
@@ -99,17 +119,27 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 					}
 				}
 			} catch (IOException e) {
-				client.getView().internalMessage("Error in Protocol.InputHandler. Trying to restore...");
+				
 				try {
-					(ih = new InputHandler()).start();
+					if (!isCloseRequested){
+						client.getView().internalMessage("Error in Protocol.InputHandler. Trying to restore...");
+						(ih = new InputHandler()).start();
+					}
 				} catch (IOException e1) {
-					e1.printStackTrace();
+					client.getView().internalMessage(e.getMessage());
 				}
 			}
 		}
 	}
 
 	private static final String EXCEPTION_SOURCE_NAME = "Server";
+	
+	/**
+	 * Splits the message of the server to find commands given by the server. Throws and CommandFormatException when the received
+	 * input does not match any known formats of <code>Protocoller</code>
+	 * @param input <code>String</code> received from the server
+	 * @throws CommandFormatException
+	 */
 	public void parse(String input) throws CommandFormatException {
 		if (input.startsWith(SERVER_WELCOME)) {
 			input = input.substring(SERVER_WELCOME.length()).trim();
