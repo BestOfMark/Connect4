@@ -5,6 +5,9 @@ public class MalFormedServerAddressException extends Exception {
 	
 	private final String faultyAddress;
 	
+	/**
+	 * An exception thrown when the given address could not be parsed.
+	 */
 	public MalFormedServerAddressException(String faultyAddress) {
 		this.faultyAddress = faultyAddress;
 	}

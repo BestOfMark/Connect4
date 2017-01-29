@@ -6,6 +6,9 @@ public class ServerNotFoundException extends Exception {
 	private final String address;
 	private final int port;
 	
+	/**
+	 * An exception thrown when the specified IP-address and/or port could not be found.
+	 */
 	public ServerNotFoundException(String address, int port) {
 		this.address = address;
 		this.port = port;

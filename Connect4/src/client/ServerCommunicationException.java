@@ -5,6 +5,9 @@ public class ServerCommunicationException extends Exception {
 	
 	private final String msg;
 	
+	/**
+	 * An Exception thrown when the message could not be send to the server. 
+	 */
 	public ServerCommunicationException(String msg) {
 		this.msg = msg;
 	}

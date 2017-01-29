@@ -7,6 +7,9 @@ public class CommandFormatException extends Exception {
 	private final String fullCmd;
 	private final String source;
 	
+	/**
+	 * An exception thrown when an entered command was not used according to the specified format.
+	 */
 	public CommandFormatException(String cmd, String fullCmd, String source) {
 		this.cmd = cmd;
 		this.fullCmd = fullCmd;
