@@ -27,11 +27,14 @@ public class Client {
 	private Protocoller protocoller;
 	
 	private enum GameState {
-		UNCONNECTED, IDLE, GAME_TURN, GAME_WAIT, CONNECTED;
+		UNCONNECTED, IDLE, GAME_TURN, GAME_WAIT, CONNECTED, SHUTDOWN;
 	}
 	
 	private GameState state = GameState.UNCONNECTED;
 	
+	/**
+	 * initialize the client
+	 */
 	public Client() {
 		local = new HumanPlayer("testUser", Chip.RED);
 		control = new TUIController(this, local);
@@ -40,6 +43,9 @@ public class Client {
 		view.setController(control);
 	}
 
+	/**
+	 * Handles communication with the <code>Player</code> and uses a <code>Protocoller</code> to communicate with the server.
+	 */
 	private void runtimeLoop() {
 		while (!exitRequested) {
 			switch (state) {
@@ -67,6 +73,9 @@ public class Client {
 			case IDLE:
 				break;
 			case CONNECTED:
+				break;
+			case SHUTDOWN:
+				exitRequested = true;
 				break;
 			case GAME_TURN:
 				Point p = control.requestMove(field.deepCopy());
@@ -98,13 +107,33 @@ public class Client {
 			}
 		}
 	}
-
+	
+	/**
+	 * Sets the timeout time, the features of the game, the usedID of the <code>Player</code>.
+	 * @param userID userID that was received by the server
+	 * @param millis the allowed time to respond to the server before
+	 * @param magicNumber an integer containing all the features of the game. 
+	 */
+	//@ requires milles > 0;
 	protected void welcomed(int userID, int millis, int magicNumber) {
 		control.setTimeout(millis);
 		local.setId(userID);
 		state = GameState.CONNECTED;
 	}
 	
+	/**
+	 * starts a new game
+	 * @param enemyName  Name of the enemy <code>Player</code>.
+	 * @param enemyID    ID of the enemy <code>Player</code>.
+	 * @param boardSizeX length of the board in the x-dimension.
+	 * @param boardSizeY length of the board in the y-dimension.
+	 * @param boardSizeZ length of the board in the z-dimension.
+	 * @param startingPlayer the ID of the <code>Player</code> that will make the first move.
+	 * @param winLength specifies the length of chips needed to win the game.
+	 */
+	//@ requires boardSizeX > 0; boardSizeY > 0; boardSizeZ > 0; winLength > 1;
+	//@ requires boardSizeX >= winLength || boardSizeY >= winLength || boardSizeZ >= winlength;
+	//@ requires enemyID != userID;
 	protected void newGame(String enemyName, int enemyID, int boardSizeX, int boardSizeY, int boardSizeZ, int startingPlayer, int winLength) {
 		enemy = new HumanPlayer(enemyName, local.chip.other());
 		field = new BoundedField(boardSizeX, boardSizeY, boardSizeZ, winLength);
@@ -115,6 +144,13 @@ public class Client {
 		}
 	}
 	
+	/**
+	 * Will display the received chat on the used <code>View</code> with the playerID or the user name of the opponent when the ID
+	 * matches the ID of the opponent.
+	 * @param sendId ID of the sending <code>Player</code>.
+	 * @param msg <code>String</code> containing the message that was send by the sending <code>Player</code>.
+	 */
+	//@ requires enemyID != userID;
 	public void chatReceived(int sendId, String msg) {
 		if (sendId == enemy.getId()) {
 			view.chatMessage(enemy.username + ": " + msg);
@@ -123,6 +159,11 @@ public class Client {
 		}
 	}
 
+	/**
+	 * Is called when an illegal move was made. Will display the input on the used <code>View</code> and will disconnect from the server 
+	 * if the <code>Player</code> is an instance of <code>ComputerPlayer</code> and the input contains the String move.  
+	 * @param input <code>String</code> containing the send illegal command.
+	 */
 	public void illegalCommand(String input) {
 		view.internalMessage(input);
 		if (input.contains(Protocoller.CLIENT_MOVE)) {
@@ -130,11 +171,20 @@ public class Client {
 		}
 	}
 
+	/**
+	 * Called when the enemy <code>Player</code> disconnects from the game.
+	 * @param enemyID ID of the enemy <code>Player</code>
+	 * @param string message received when the opponent left the game.
+	 */
 	public void opponentLeft(int enemyID, String string) {
 		view.internalMessage(string);
 		state = GameState.IDLE;
 	}
 
+	/**
+	 * Gives a message informing the <code>Player</code> whether the game ended in a win, loss or a tie. 
+	 * @param id The Id of the winning player.
+	 */
 	public void gameOver(int id) {
 		if (id == local.getId()) {
 			view.internalMessage("You have won the game");
@@ -148,6 +198,13 @@ public class Client {
 		state = GameState.CONNECTED;
 	}
 
+	/**
+	 * Adds a chip to the <code>field</code> as received by the server.
+	 * @param x location in the x-dimension of the field.
+	 * @param y location in the y-dimension of the field
+	 * @param moveId ID of the <code>Player</code> whom made the move.
+	 * @param nextId ID of the <code>Player</code> whom has to make the next move.
+	 */
 	public void receivedMove(int x, int y, int moveId, int nextId) {
 		if (moveId == local.getId()) {
 			field.addChip(local.chip, x, y);
@@ -160,21 +217,28 @@ public class Client {
 		}
 	}
 
-	public View getView() {
+	/**
+	 * Returns the view object of the client
+	 * @return view object of the client
+	 */
+	/* Pure */public View getView() {
 		return view;
 	}
 
+	/**
+	 * Closes the used <code>Protocoller</code> and terminates the client.
+	 */
 	public void shutdown() {
-		protocoller.close();
-		exitRequested = true;
+		if (state != GameState.UNCONNECTED) protocoller.close();
+		state = GameState.SHUTDOWN;
 	}
 	
-	public Protocoller getProtocoller() {
+	/**
+	 * Returns the <code>Protocoller</code> of the client.
+	 * @return the <code>Protocoller</code> object of the client.
+	 */
+	/* Pure */public Protocoller getProtocoller() {
 		return protocoller;
-	}
-	
-	public void exit() {
-		
 	}
 
 	public static void main(String[] args) {
