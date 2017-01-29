@@ -10,6 +10,10 @@ public class LookingForBetterName extends ComputerPlayer {
 
 	private static final String NAME = "LookingForBetterName";
 	
+	/**
+	 * Calls the constructor of Player with the username LookingForBetterName
+	 * @param chip specifies the chip used by the ComputerPlayer
+	 */
 	public LookingForBetterName(Chip chip) {
 		super(NAME, chip);
 	}
