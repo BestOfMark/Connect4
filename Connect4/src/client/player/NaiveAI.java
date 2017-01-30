@@ -6,7 +6,7 @@ import java.util.Random;
 import game.Chip;
 import game.Field;
 
-public class LookingForBetterName extends ComputerPlayer {
+public class NaiveAI extends ComputerPlayer {
 
 	private static final String NAME = "LookingForBetterName";
 	
@@ -14,19 +14,31 @@ public class LookingForBetterName extends ComputerPlayer {
 	 * Calls the constructor of Player with the username LookingForBetterName
 	 * @param chip specifies the chip used by the ComputerPlayer
 	 */
-	public LookingForBetterName(Chip chip) {
+	public NaiveAI(Chip chip) {
 		super(NAME, chip);
 	}
 
 	@Override
-	public void startThinking(Field fieldCopy) {
+	public Point getMove(Field fieldCopy) {
+		Point instantWin = instaWin(fieldCopy);
+		if (instantWin != null) return instantWin;
 		Random rand = new Random();
 		int x = -1, y = -1;
 		do {
 			x = rand.nextInt(fieldCopy.dimX);
 			y = rand.nextInt(fieldCopy.dimY);
 		} while (!fieldCopy.inBounds(x, y));
-		control.setMove(new Point(x,y));
+		return new Point(x,y);
 	}
 
+	public Point instaWin(Field field) {
+		for (int x = 0; x < field.dimX; x++) {
+			for (int y = 0; y < field.dimY; y++) {
+				Field copy = field.deepCopy();
+				copy.addChip(chip, x, y);
+				if (copy.checkWin(chip)) return new Point(x,y);
+			}
+		}
+		return null;
+	}
 }

@@ -9,7 +9,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import client.Client;
-import client.Protocoller;
 import client.player.ComputerPlayer;
 import client.player.Player;
 import game.Field;
@@ -49,22 +48,12 @@ public class TUIController extends Controller {
 	}
 
 	@Override
-	public Point requestMove(Field f) {
+	public Point requestMove(Field fCopy) {
 		view.internalMessage("What is your move?");
 		inputWaiterLock.lock();
 		try {
 			if (player instanceof ComputerPlayer) {
-				new Thread(new Runnable() {
-					public void run() {
-						//Wait a bit such that the move is set in this thread after the await() is called in the outer thread
-						try {
-							Thread.sleep(2);
-						} catch (InterruptedException e) {
-							//Oh shit
-						}
-						((ComputerPlayer) player).startThinking(f);
-					};
-				}).start();
+				return ((ComputerPlayer) player).getMove(fCopy);
 			}
 			try {
 				moveGiven.await(timeout, TimeUnit.MILLISECONDS);

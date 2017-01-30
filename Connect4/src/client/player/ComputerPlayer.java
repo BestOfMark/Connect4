@@ -1,5 +1,7 @@
 package client.player;
 
+import java.awt.Point;
+
 import game.Chip;
 import game.Field;
 
@@ -21,6 +23,6 @@ public abstract class ComputerPlayer extends Player {
 	 * the next move.
 	 */
 	//@ requires fieldCopy != null;
-	abstract public void startThinking(Field fieldCopy);
+	abstract public Point getMove(Field fieldCopy);
 
 }
