@@ -248,6 +248,9 @@ public class Client {
 	 * @param nextId ID of the <code>Player</code> whom has to make the next move.
 	 */
 	public void receivedMove(int x, int y, int moveId, int nextId) {
+		System.out.println("receivedMove(" + x + ", " + y + ", " + moveId + ", " + nextId + ")");
+		System.out.println("ENEMY ID = " + enemy.getId());
+		System.out.println("LOCAL ID = " + local.getId());
 		if (moveId == local.getId()) {
 			System.out.println("LOCAL MOVE DETECTED");
 			field.addChip(local.chip, x, y);
