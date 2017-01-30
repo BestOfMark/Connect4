@@ -75,7 +75,7 @@ public class Client {
 	 * initialize the client
 	 */
 	public Client() {
-		local = new HumanPlayer("testUser", Chip.RED);
+		local = new HumanPlayer("Mark", Chip.RED);
 		control = new TUIController(this, local);
 		view = new TUI(this);
 		control.setView(view);

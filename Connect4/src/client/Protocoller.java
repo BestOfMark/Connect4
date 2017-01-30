@@ -212,11 +212,11 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 			client.illegalCommand(input);
 		} else if (input.startsWith(SERVER_CHAT_MSG)) {
 			input = input.substring(SERVER_CHAT_MSG.length()).trim();
-			String[] args = input.split("[\\s,]+");
+			int index = input.indexOf(" ");
 			try {
 				client.chatReceived(
-						Integer.parseInt(args[0]),
-						args[1]);
+						Integer.parseInt(input.substring(0, index)),
+						input.substring(index));
 			} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
 				throw new CommandFormatException(SERVER_CHAT_MSG, input, EXCEPTION_SOURCE_NAME);
 			}
