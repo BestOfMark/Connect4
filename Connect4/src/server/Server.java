@@ -193,6 +193,10 @@ public class Server {
 		player.cmdWelcome(player.id, THINK_TIME, MAGIC_NUMBER);
 		player.state = PlayerState.IDLE;
 		
+		
+	}
+	
+	public void gameRequested(NetworkPlayer player) {
 		//Looking for an opponent
 		NetworkPlayer opponent = getAvailableOpponent(player);
 		if (opponent != null) {

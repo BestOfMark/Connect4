@@ -202,6 +202,8 @@ public class InputHandler extends Thread {
 			} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
 				throw new CommandFormatException(CLIENT_CHAT, input, EXCEPTION_SOURCE_NAME);
 			}
+		} else if (input.startsWith(CLIENT_REQUEST)) {
+			server.gameRequested(player);
 		} else {
 			//Extract the unknown command keyword if applicable.
 			int index = input.indexOf(' ');
