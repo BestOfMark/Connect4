@@ -187,10 +187,7 @@ public class TUIController extends Controller {
 				} else if (input.startsWith(CMD_CHAT)) {
 					input = input.substring(CMD_CHAT.length()).trim();
 					try {
-						int index = input.indexOf(" ");
-						int recipient = Integer.valueOf(input.substring(0, index));
-						String msg = input.substring(index).trim();
-						client.getProtocoller().cmdChat(recipient, msg);
+						client.getProtocoller().cmdChat(input);
 					} catch (IOException e) {
 						System.err.println("Error while parsing CHAT");
 					}

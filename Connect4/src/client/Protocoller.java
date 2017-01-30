@@ -66,6 +66,9 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 		bw.write(String.join(COMMAND_DELIMITER, CLIENT_HELLO, username, String.valueOf(isAi), String.valueOf(clientCapabilities)));
 		bw.newLine();
 		bw.flush();
+		bw.write(String.join(COMMAND_DELIMITER, CLIENT_REQUEST));
+		bw.newLine();
+		bw.flush();
 	}
 
 	@Override
@@ -76,9 +79,9 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 	}
 
 	@Override
-	public void cmdChat(int recipientID, String msg) throws IOException {
+	public void cmdChat(String msg) throws IOException {
 		System.out.println("sending chat protocoller");
-		bw.write(String.join(COMMAND_DELIMITER, CLIENT_CHAT, String.valueOf(recipientID), msg));
+		bw.write(String.join(COMMAND_DELIMITER, CLIENT_CHAT, msg));
 		bw.newLine();
 		bw.flush();
 	}
@@ -86,6 +89,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 	public static final String CLIENT_HELLO = "HELLO";
 	public static final String CLIENT_MOVE = "MOVE";
 	public static final String CLIENT_CHAT = "CHAT";
+	public static final String CLIENT_REQUEST = "REQUEST";
 	
 	/**
 	 * Closes the communication with the server.
