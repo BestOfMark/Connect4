@@ -194,6 +194,8 @@ public class Client {
 	public void chatReceived(int sendId, String msg) {
 		if (enemy != null && sendId == enemy.getId()) {
 			view.chatMessage(enemy.username + ": " + msg);
+		} else if (sendId == local.getId()) {
+			view.chatMessage("Me: " + msg);
 		} else {
 			view.chatMessage(sendId + ": " + msg);
 		}
@@ -247,9 +249,11 @@ public class Client {
 	 */
 	public void receivedMove(int x, int y, int moveId, int nextId) {
 		if (moveId == local.getId()) {
+			System.out.println("LOCAL MOVE DETECTED");
 			field.addChip(local.chip, x, y);
 			state = GameState.GAME_WAIT;
 		} else if (moveId == enemy.getId()) {
+			System.out.println("ENEMY MOVE DETECTED");
 			field.addChip(enemy.chip, x, y);
 			state = GameState.GAME_TURN;
 		} else if (moveId != local.getId() && moveId != enemy.getId()) {
