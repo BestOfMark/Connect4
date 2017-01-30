@@ -216,7 +216,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 			try {
 				client.chatReceived(
 						Integer.parseInt(input.substring(0, index)),
-						input.substring(index));
+						input.substring(index).trim());
 			} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
 				throw new CommandFormatException(SERVER_CHAT_MSG, input, EXCEPTION_SOURCE_NAME);
 			}

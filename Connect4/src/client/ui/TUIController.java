@@ -140,7 +140,7 @@ public class TUIController extends Controller {
 				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				String input;
 				while (!isCloseRequested && (input = br.readLine()) != null) {
-					view.userInput(input);
+//					view.userInput(input);
 					parse(input);
 				}
 			} catch (IOException e) {
