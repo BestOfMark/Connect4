@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
-import client.Protocoller;
-
 public class Server {
 	
 	/**
@@ -179,7 +177,7 @@ public class Server {
 	}
 
 	private static final int DIM_X = 4, DIM_Y = 4, DIM_Z = 4, WIN = 4;
-	private static final int THINK_TIME = 60000;
+	private static final int THINK_TIME = 600000;
 	private static final int MAGIC_NUMBER = 0;
 	/**
 	 * Called when the <code>InputHandler</code> of a <code>NetworkPlayer</code> receives a <b>HELLO</b> command.

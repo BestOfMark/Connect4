@@ -175,6 +175,7 @@ public class Client {
 	//@ requires enemyID != userID;
 	protected void newGame(String enemyName, int enemyID, int boardSizeX, int boardSizeY, int boardSizeZ, int startingPlayer, int winLength) {
 		enemy = new HumanPlayer(enemyName, local.chip.other());
+		enemy.setId(enemyID);
 		field = new BoundedField(boardSizeX, boardSizeY, boardSizeZ, winLength);
 		if (startingPlayer == enemyID) {
 			state = GameState.GAME_WAIT;

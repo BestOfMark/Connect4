@@ -198,7 +198,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 				throw new CommandFormatException(SERVER_GAME_END, input, EXCEPTION_SOURCE_NAME);
 			}
 		} else if (input.startsWith(SERVER_LEFT)) {
-			input = input.substring(SERVER_MOVE_SUCCESS.length()).trim();
+			input = input.substring(SERVER_LEFT.length()).trim();
 			String[] args = input.split("[\\s,]+");
 			try {
 				client.opponentLeft(
