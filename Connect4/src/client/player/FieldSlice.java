@@ -22,6 +22,65 @@ public class FieldSlice {
 		this.winSize = winSize;
 	}
 
+	public double calculatePotential(Chip c, boolean b) {
+		double potential = 0.0;
+		for (int x = 0; x < dimHor; x++) {
+			for (int y = 0; y < dimVert; y++) {
+				//Vertical potential
+				if (b) potential += potentialTraceVertical(c, x, y);
+				
+				//Horizontal potential
+				potential += potentialTrace(c, x, y, 1, 0);
+				
+				//Rutger potential
+				potential += potentialTrace(c, x, y, 1, 1);
+				
+				//Mark potential
+				potential += potentialTrace(c, x, y, -1, 1);
+			}
+		}
+		return potential;
+	}
+	
+	public double potentialTrace(Chip c, int startX, int startY, int dx, int dy) {
+		int streak = 0;
+		int foundation = 0;
+		for (int i = 0; i < winSize; i++) {
+			int x = startX + i * dx;
+			int y = startY + i * dy;
+			if (!inField(x,y) || field[x][y] != c) return 0;
+			if (field[x][y] == c) streak++;
+			else foundation += howManyUnderneath(x, y);
+		}
+		return potential(foundation, streak);
+	}
+	
+	public double potentialTraceVertical(Chip c, int startX, int startY) {
+		int streak = 0;
+		int foundation = howManyUnderneath(startX, startY);
+		for (int i = 0; i < winSize; i++) {
+			int y = startY + i;
+			if (!inField(startX,y) || field[startX][y] != c) return 0;
+			if (field[startX][y] == c) streak++;
+		}
+		return potential(foundation, streak);
+	}
+	
+	private int howManyUnderneath(int xPos, int yPos) {
+		for (int y = yPos - 1; y >= 0; y--) {
+			if (field[xPos][y] != null) return yPos - y + 1;
+		}
+		return yPos + 1;
+	}
+	
+	private boolean inField(int x, int y) {
+		return x >= 0 && x < dimHor && y >= 0 && y < dimVert;
+	}
+	
+	private double potential(double foundation, double streak) {
+		return (foundation > 0) ? 1.0D / Math.pow(foundation, 1.0D) * Math.pow(2.0D, 2.0D * streak) : Math.pow(2.0D, 2.0 * streak + 1);
+	}
+	
 	private static final char WHITESPACE = ' ';
 	private static final char EMPTYSPACE = 'O';
 	
@@ -45,33 +104,9 @@ public class FieldSlice {
 		return sb.toString();
 	}
 	
-	public double potentialTrace(Chip c, int startX, int startY, int dx, int dy) {
-		int streak = 0;
-		int foundation = 0;
-		for (int i = 0; i < winSize; i++) {
-			int x = startX + i * dx;
-			int y = startY + i * dy;
-			if (!inField(x,y) || field[x][y] != c) return 0;
-			if (field[x][y] == c) streak++;
-			else foundation += howManyUnderneath(x, y);
-		}
-		return potential(foundation, streak);
-	}
 	
-	private int howManyUnderneath(int xPos, int yPos) {
-		for (int y = yPos - 1; y >= 0; y--) {
-			if (field[xPos][y] != null) return yPos - y + 1;
-		}
-		return yPos + 1;
-	}
+	//TESTING GOES HERE
 	
-	private boolean inField(int x, int y) {
-		return x >= 0 && x < dimHor && y >= 0 && y < dimVert;
-	}
-	
-	private double potential(double foundation, double streak) {
-		return (foundation > 0) ? 1.0D / Math.pow(foundation, 1.0D) * Math.pow(2.0D, 2.0D * streak) : Math.pow(2.0D, 2.0 * streak + 1);
-	}
 	
 	public static void main(String[] args) {
 		FieldSlice fs = new FieldSlice(6, 4, 4);

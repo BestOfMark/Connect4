@@ -150,4 +150,9 @@ public class BoundedField extends Field {
 		}
 		return true;
 	}
+	
+	@Override
+	public Chip[] getColumn(int colX, int colY) {
+		return board[colX][colY];
+	}
 }

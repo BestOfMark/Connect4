@@ -28,7 +28,6 @@ public abstract class Field extends Observable {
 		this.winLength = winLength;
 	}
 	
-
 	/**
 	 * Adds the specified chip to the specified column.
 	 * @param c the chip that should be added to the column.
@@ -96,4 +95,6 @@ public abstract class Field extends Observable {
 	 * @return a copy of the field.
 	 */
 	/*@ pure */ abstract public Field deepCopy();
+	
+	/*@ pure */ abstract public Chip[] getColumn(int colX, int colY);
 }
