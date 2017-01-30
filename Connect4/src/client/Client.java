@@ -185,7 +185,7 @@ public class Client {
 		} else {
 			state = GameState.GAME_TURN; 			
 		}
-		field.toString();
+		
 	}
 	
 	/**
