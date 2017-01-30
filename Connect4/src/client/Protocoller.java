@@ -64,17 +64,23 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 	@Override
 	public void cmdHello(String username, boolean isAi, int clientCapabilities) throws IOException {
 		bw.write(String.join(COMMAND_DELIMITER, CLIENT_HELLO, username, String.valueOf(isAi), String.valueOf(clientCapabilities)));
+		bw.newLine();
+		bw.flush();
 	}
 
 	@Override
 	public void cmdMove(int x, int y) throws IOException {
 		bw.write(String.join(COMMAND_DELIMITER, CLIENT_MOVE, String.valueOf(x), String.valueOf(y)));
-		
+		bw.newLine();
+		bw.flush();
 	}
 
 	@Override
 	public void cmdChat(int recipientID, String msg) throws IOException {
+		System.out.println("sending chat protocoller");
 		bw.write(String.join(COMMAND_DELIMITER, CLIENT_CHAT, String.valueOf(recipientID), msg));
+		bw.newLine();
+		bw.flush();
 	}
 	
 	public static final String CLIENT_HELLO = "HELLO";
