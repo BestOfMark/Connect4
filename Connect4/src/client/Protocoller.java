@@ -162,6 +162,14 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 			} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
 				throw new CommandFormatException(SERVER_WELCOME, input, EXCEPTION_SOURCE_NAME);
 			}
+		} else if (input.startsWith(SERVER_GAME_END)) {
+			input = input.substring(SERVER_GAME_END.length()).trim();
+			try {
+				client.gameOver(
+						Integer.parseInt(input));
+			} catch (NumberFormatException e) {
+				throw new CommandFormatException(SERVER_GAME_END, input, EXCEPTION_SOURCE_NAME);
+			}
 		} else if (input.startsWith(SERVER_GAME)) {
 			input = input.substring(SERVER_GAME.length()).trim();
 			String[] args = input.split("[\\s,]+");
@@ -188,14 +196,6 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 						Integer.parseInt(args[0]));
 			} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
 				throw new CommandFormatException(SERVER_MOVE_SUCCESS, input, EXCEPTION_SOURCE_NAME);
-			}
-		} else if (input.startsWith(SERVER_GAME_END)) {
-			input = input.substring(SERVER_GAME_END.length()).trim();
-			try {
-				client.gameOver(
-						Integer.parseInt(input));
-			} catch (NumberFormatException e) {
-				throw new CommandFormatException(SERVER_GAME_END, input, EXCEPTION_SOURCE_NAME);
 			}
 		} else if (input.startsWith(SERVER_LEFT)) {
 			input = input.substring(SERVER_LEFT.length()).trim();

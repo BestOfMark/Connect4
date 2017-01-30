@@ -28,7 +28,7 @@ public class TUIController extends Controller {
 	private String address;
 	private String playerID;
 	
-	private static final int MESSAGE_FREQUENCY = 10;
+	private static final int MESSAGE_FREQUENCY = 60;
 	
 	/**
 	 * Calls the constructor of Controller and creates and inputHandler.

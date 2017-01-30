@@ -257,6 +257,7 @@ public class Client {
 			field.addChip(enemy.chip, x, y);
 			state = GameState.GAME_TURN;
 		} else if (moveId != local.getId() && moveId != enemy.getId()) {
+			System.out.println("UNKNOWN MOVE DETECTED");
 			state = GameState.UNCONNECTED;
 		}
 	}
