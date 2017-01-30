@@ -185,8 +185,9 @@ public class TUIController extends Controller {
 						moveGiven.signal();
 					}
 				} else if (input.startsWith(CMD_CHAT)) {
+					String[] args = input.substring(CMD_CHAT.length()).replaceAll("\\D", " ").trim().split("\\s+");
 					try {
-						client.getProtocoller().cmdChat(1, input);
+						client.getProtocoller().cmdChat(Integer.parseInt(args[0]), args[1]);
 					} catch (IOException e) {
 						System.err.println("Error while parsing CHAT");
 					}

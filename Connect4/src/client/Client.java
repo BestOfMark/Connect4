@@ -191,7 +191,7 @@ public class Client {
 	 */
 	//@ requires enemyID != userID;
 	public void chatReceived(int sendId, String msg) {
-		if (sendId == enemy.getId()) {
+		if (enemy != null && sendId == enemy.getId()) {
 			view.chatMessage(enemy.username + ": " + msg);
 		} else {
 			view.chatMessage(sendId + ": " + msg);
