@@ -18,6 +18,8 @@ public class BoundedField extends Field {
 	@Override
 	public void addChip(Chip c, int x, int y) {
 		board[x][y][columnHeight(x,y)] = c;
+		setChanged();
+		notifyObservers();
 	}
 
 	@Override
@@ -108,15 +110,33 @@ public class BoundedField extends Field {
 		return copy;
 	}
 
+	private static final char EMPTY_SPACE = 'X';
+	private static final String ROOM_BETWEEN_SLICES = "    ";
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Textual overview of the board:\n");
-		for (int y = 0; y < dimY; y++) {
-			for (int x = 0; x < dimX; x++) {
-				sb.append(String.format("%2d", columnHeight(x, y)));
-				if (x < dimX - 1) sb.append(" ");
+			for (int y = 0; y < dimY; y++) {
+				for (int z = 0; z < dimZ; z++) {
+					for (int x = 0; x < dimX; x++) {
+						if (board[x][y][z] != null) sb.append(board[x][y][z].getCharacter());
+						else sb.append(EMPTY_SPACE);
+						if (x < dimX - 1) sb.append(" ");
+					}
+				sb.append(ROOM_BETWEEN_SLICES);
+				}
+				if (y < dimY - 1) sb.append('\n');
 			}
-			if (y < dimY - 1) sb.append('\n');
+		sb.append('\n');
+		for (int z = 0; z < dimZ; z++) {
+			for (int x = 0; x < dimX - 1; x++ ) {
+				sb.append(" ");
+			}
+			sb.append(z);
+			for (int x = 0; x < dimX - 1; x++) {
+				sb.append(" ");
+			}
+			sb.append(ROOM_BETWEEN_SLICES);
 		}
 		return sb.toString();
 	}

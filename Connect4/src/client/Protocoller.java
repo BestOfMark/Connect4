@@ -66,6 +66,10 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 		bw.write(String.join(COMMAND_DELIMITER, CLIENT_HELLO, username, String.valueOf(isAi), String.valueOf(clientCapabilities)));
 		bw.newLine();
 		bw.flush();
+		cmdGameRequest();
+	}
+	
+	public void cmdGameRequest() throws IOException {
 		bw.write(String.join(COMMAND_DELIMITER, CLIENT_REQUEST));
 		bw.newLine();
 		bw.flush();

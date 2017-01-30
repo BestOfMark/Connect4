@@ -63,7 +63,7 @@ public class Client {
 	 *
 	 */
 	private enum GameState {
-		UNCONNECTED, IDLE, GAME_TURN, GAME_WAIT, CONNECTED, SHUTDOWN;
+		UNCONNECTED, IDLE, CONNECTED, GAME_TURN, GAME_AWAITING_RESPONSE, GAME_WAIT,  SHUTDOWN;
 	}
 	
 	/**
@@ -113,16 +113,12 @@ public class Client {
 				break;
 			case CONNECTED:
 				break;
-			case SHUTDOWN:
-				exitRequested = true;
-				break;
 			case GAME_TURN:
 				Point p = control.requestMove(field.deepCopy());
 				if (p != null) {
 					view.internalMessage("Obtained move " + p.toString());
 				} else {
 					view.internalMessage("Turn timed out");
-					
 					break;
 				}
 				if (!field.inBounds(p.x, p.y) || field.columnFull(p.x, p.y)) {
@@ -140,8 +136,14 @@ public class Client {
 					protocoller.close();
 					state = GameState.UNCONNECTED;
 				}
+				state = GameState.GAME_AWAITING_RESPONSE;
+				break;
+			case GAME_AWAITING_RESPONSE:
 				break;
 			case GAME_WAIT:
+				break;
+			case SHUTDOWN:
+				exitRequested = true;
 				break;
 			}
 		}
@@ -177,11 +179,13 @@ public class Client {
 		enemy = new HumanPlayer(enemyName, local.chip.other());
 		enemy.setId(enemyID);
 		field = new BoundedField(boardSizeX, boardSizeY, boardSizeZ, winLength);
+		field.addObserver(view);
 		if (startingPlayer == enemyID) {
 			state = GameState.GAME_WAIT;
 		} else {
 			state = GameState.GAME_TURN; 			
 		}
+		field.toString();
 	}
 	
 	/**
@@ -238,6 +242,11 @@ public class Client {
 			view.internalMessage("Weird ID received");			
 		}
 		state = GameState.CONNECTED;
+		try {
+			protocoller.cmdGameRequest();
+		} catch (IOException e) {
+			view.internalMessage("unable to send gameRequest");
+		}
 	}
 
 	/**
@@ -248,19 +257,14 @@ public class Client {
 	 * @param nextId ID of the <code>Player</code> whom has to make the next move.
 	 */
 	public void receivedMove(int x, int y, int moveId, int nextId) {
-		System.out.println("receivedMove(" + x + ", " + y + ", " + moveId + ", " + nextId + ")");
-		System.out.println("ENEMY ID = " + enemy.getId());
-		System.out.println("LOCAL ID = " + local.getId());
 		if (moveId == local.getId()) {
-			System.out.println("LOCAL MOVE DETECTED");
 			field.addChip(local.chip, x, y);
 			state = GameState.GAME_WAIT;
 		} else if (moveId == enemy.getId()) {
-			System.out.println("ENEMY MOVE DETECTED");
 			field.addChip(enemy.chip, x, y);
 			state = GameState.GAME_TURN;
 		} else if (moveId != local.getId() && moveId != enemy.getId()) {
-			System.out.println("UNKNOWN MOVE DETECTED");
+			System.out.println("UNKNOWN PLAYER DETECTED");
 			state = GameState.UNCONNECTED;
 		}
 	}
