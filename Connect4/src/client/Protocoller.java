@@ -191,9 +191,9 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 			try {
 				client.receivedMove(
 						Integer.parseInt(args[0]),
-						Integer.parseInt(args[0]),
-						Integer.parseInt(args[0]),
-						Integer.parseInt(args[0]));
+						Integer.parseInt(args[1]),
+						Integer.parseInt(args[2]),
+						Integer.parseInt(args[3]));
 			} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
 				throw new CommandFormatException(SERVER_MOVE_SUCCESS, input, EXCEPTION_SOURCE_NAME);
 			}
