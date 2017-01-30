@@ -193,15 +193,7 @@ public class InputHandler extends Thread {
 			}
 		} else if (input.startsWith(CLIENT_CHAT)) {
 			input = input.substring(CLIENT_CHAT.length()).trim();
-			String[] args = input.split(COMMAND_DELIMITER);
-			try {
-				server.chatReceived(
-					player,
-					Integer.parseInt(args[0]),
-					args[1]);
-			} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
-				throw new CommandFormatException(CLIENT_CHAT, input, EXCEPTION_SOURCE_NAME);
-			}
+			server.chatReceived(player, input);
 		} else if (input.startsWith(CLIENT_REQUEST)) {
 			server.gameRequested(player);
 		} else {

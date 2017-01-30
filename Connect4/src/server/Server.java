@@ -211,30 +211,15 @@ public class Server {
 	}
 
 	/**
-	 * Called when the <code>InputHandler</code> of a <code>NetworkPlayer</code> receives a <b>CHAT</b> command.
-	 * @param player the <code>NetworkPlayer</code> from which this command originated.
+	 * Called when the <code>InputHandler</code> of a <code>NetworkPlayer</code> receives a <b>CHAT</b> command. Broadcasts 
+	 * the chat message to every connected client.
 	 * @param msg the message to be sent
-	 * @param recipientId the id to whom the message should be sent to. <code>-1</code> means the message should be sent
-	 * to every connected player.
 	 */
-	public void chatReceived(NetworkPlayer player, int recipientId, String msg) {
-		if (recipientId == -1) {
-			//Send to everyone, including the sender
-			Iterator<Integer> it = connectedPlayers.keySet().iterator();
-			while (it.hasNext()) connectedPlayers.get(it.next()).cmdBroadcastMessage(player.id, msg);
-		} else {
-			NetworkPlayer recipient = connectedPlayers.get(recipientId);
-			if (recipient == null) {
-				//The recipient could not be found
-				System.out.println("Could not find the recipient of the chat message");
-				//Report the problem. No transgression
-				player.cmdReportIllegal(String.join(Protocoller.COMMAND_DELIMITER, String.valueOf(recipientId), msg));
-			} else {
-				//Send to intended recipient and also to the sender
-				recipient.cmdBroadcastMessage(player.id, msg);
-				player.cmdBroadcastMessage(player.id, msg);
-			}
-		}
+	public void chatReceived(NetworkPlayer player, String msg) {
+		//Send to everyone, including the sender
+		Iterator<Integer> it = connectedPlayers.keySet().iterator();
+		while (it.hasNext()) connectedPlayers.get(it.next()).cmdBroadcastMessage(player.id, msg);
+
 	}
 
 }
