@@ -1,0 +1,87 @@
+package client.player;
+
+import game.Chip;
+
+public class FieldSlice {
+
+	private Chip[][] field;
+	private final int dimHor, dimVert;
+	private final int winSize;
+	
+	public FieldSlice(int width, int height, int winSize) {
+		this.dimHor = width;
+		this.dimVert = height;
+		field = new Chip[dimHor][dimVert];
+		this.winSize = winSize;
+	}
+	
+	public FieldSlice(Chip[][] slice, int winSize) {
+		dimHor = slice.length;
+		dimVert = slice[0].length;
+		this.field = slice;
+		this.winSize = winSize;
+	}
+
+	private static final char WHITESPACE = ' ';
+	private static final char EMPTYSPACE = 'O';
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("Field slice:\n");
+		for (int y = dimVert - 1; y >= 0; y--) {
+			for (int x = 0; x < dimHor; x++) {
+				if (field[x][y] == null) {
+					sb.append(EMPTYSPACE);
+				} else {
+					sb.append(field[x][y].getCharacter());
+				}
+				if (x < dimHor - 1) {
+					sb.append(WHITESPACE);
+				}
+			}
+			sb.append("\n");
+		}
+		sb.append("End of field");
+		return sb.toString();
+	}
+	
+	public double potentialTrace(Chip c, int startX, int startY, int dx, int dy) {
+		int streak = 0;
+		int foundation = 0;
+		for (int i = 0; i < winSize; i++) {
+			int x = startX + i * dx;
+			int y = startY + i * dy;
+			if (!inField(x,y) || field[x][y] != c) return 0;
+			if (field[x][y] == c) streak++;
+			else foundation += howManyUnderneath(x, y);
+		}
+		return potential(foundation, streak);
+	}
+	
+	private int howManyUnderneath(int xPos, int yPos) {
+		for (int y = yPos - 1; y >= 0; y--) {
+			if (field[xPos][y] != null) return yPos - y + 1;
+		}
+		return yPos + 1;
+	}
+	
+	private boolean inField(int x, int y) {
+		return x >= 0 && x < dimHor && y >= 0 && y < dimVert;
+	}
+	
+	private double potential(double foundation, double streak) {
+		return (foundation > 0) ? 1.0D / Math.pow(foundation, 1.0D) * Math.pow(2.0D, 2.0D * streak) : Math.pow(2.0D, 2.0 * streak + 1);
+	}
+	
+	public static void main(String[] args) {
+		FieldSlice fs = new FieldSlice(6, 4, 4);
+		System.out.println(fs.toString());
+		
+		FieldSlice fs2 = new FieldSlice(new Chip[][] {
+			new Chip[]{Chip.RED, Chip.RED, Chip.RED, Chip.RED}, 
+			new Chip[]{Chip.RED, Chip.RED, Chip.YELLOW, Chip.YELLOW}, 
+			new Chip[]{Chip.YELLOW, Chip.RED, Chip.YELLOW, Chip.RED}
+		}, 4);
+		System.out.println(fs2.toString());
+	}
+}
