@@ -27,13 +27,14 @@ public class NaiveAI extends ComputerPlayer {
 		do {
 			x = rand.nextInt(fieldCopy.dimX);
 			y = rand.nextInt(fieldCopy.dimY);
-		} while (!fieldCopy.inBounds(x, y) && !fieldCopy.columnFull(x, y));
+		} while (!fieldCopy.inBounds(x, y) || fieldCopy.columnFull(x, y));
 		return new Point(x,y);
 	}
 
 	public Point instaWin(Field field) {
 		for (int x = 0; x < field.dimX; x++) {
 			for (int y = 0; y < field.dimY; y++) {
+				if (!field.inBounds(x, y) || field.columnFull(x, y)) continue;
 				Field copy = field.deepCopy();
 				copy.addChip(chip, x, y);
 				if (copy.checkWin(chip)) return new Point(x,y);
