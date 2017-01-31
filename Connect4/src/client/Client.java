@@ -8,6 +8,8 @@ import client.player.HumanPlayer;
 import client.player.NaiveAI;
 import client.player.Player;
 import client.ui.Controller;
+import client.ui.GUI;
+import client.ui.GUIController;
 import client.ui.TUI;
 import client.ui.TUIController;
 import client.ui.View;
@@ -76,9 +78,9 @@ public class Client {
 	 * initialize the client
 	 */
 	public Client() {
-		local = new NaiveAI(Chip.RED);
-		control = new TUIController(this, local);
-		view = new TUI(this);
+		local = new HumanPlayer("Mark", Chip.RED);
+		control = new GUIController(this, local);
+		view = new GUI(this);
 		control.setView(view);
 		view.setController(control);
 	}
@@ -306,6 +308,10 @@ public class Client {
 	 */
 	/* Pure */public Protocoller getProtocoller() {
 		return protocoller;
+	}
+	
+	/*@ pure */public boolean inGame() {
+		return state == GameState.GAME_TURN || state == GameState.GAME_WAIT || state == GameState.GAME_AWAITING_RESPONSE;
 	}
 
 	public static void main(String[] args) {
