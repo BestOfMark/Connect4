@@ -67,10 +67,13 @@ public class FieldSlice {
 	}
 	
 	private int howManyUnderneath(int xPos, int yPos) {
-		for (int y = yPos - 1; y >= 0; y--) {
-			if (field[xPos][y] != null) return yPos - y + 1;
+		if (yPos == 0) return 0;
+		int y = yPos;
+		for (int i = 0; y >= 0; i++) {
+			y = yPos - i - 1;
+			if (field[xPos][y] != null) return i;
 		}
-		return yPos + 1;
+		return yPos - 1;
 	}
 	
 	private boolean inField(int x, int y) {
@@ -118,5 +121,14 @@ public class FieldSlice {
 			new Chip[]{Chip.YELLOW, Chip.RED, Chip.YELLOW, Chip.RED}
 		}, 4);
 		System.out.println(fs2.toString());
+		
+		FieldSlice fs3 = new FieldSlice(new Chip[][] {
+			new Chip[]{Chip.RED, Chip.RED, null, null}, 
+			new Chip[]{Chip.RED, Chip.RED, Chip.YELLOW, null}, 
+			new Chip[]{Chip.YELLOW, null, null, null}
+		}, 4);
+		System.out.println(fs3.toString());
+		
+		System.out.println(fs3.howManyUnderneath(2, 3));
 	}
 }

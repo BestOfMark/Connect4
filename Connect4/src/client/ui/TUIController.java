@@ -21,13 +21,11 @@ public class TUIController extends Controller {
 	private static ReentrantLock inputWaiterLock = new ReentrantLock();
 	private static Condition addressEntered = inputWaiterLock.newCondition();
 	private static Condition moveGiven = inputWaiterLock.newCondition();
-	private static Condition playerIDEntered = inputWaiterLock.newCondition();
 	
 	private Point move;
 	private String address;
-	private String playerID;
 	
-	private static final int MESSAGE_FREQUENCY = 60;
+	protected static final int MESSAGE_FREQUENCY = 60;
 	
 	/**
 	 * Calls the constructor of Controller and creates and inputHandler.
@@ -88,7 +86,11 @@ public class TUIController extends Controller {
 		}
 	}
 	
-	@Override
+	/**
+	 * sets the next move to the point(x,y) of move
+	 * @param move a point(x,y)
+	 */
+	//@ requires move != null;
 	synchronized public void setMove(Point move) {
 		inputWaiterLock.lock();
 		try {
@@ -99,18 +101,14 @@ public class TUIController extends Controller {
 		}
 	}
 	
-	@Override
-	public String requestPlayerID() {
-		 view.internalMessage("Please input the ip-address of the desired opponent");
-		 try {
-			 playerIDEntered.await(MESSAGE_FREQUENCY, TimeUnit.SECONDS);
-			 return playerID;
-		 } catch(InterruptedException e) {
-			System.err.println("Interrupted while waiting for player to input the playerID");
-			System.err.println(e.getMessage());
-			System.err.println("Returning null");
-		 }
-		return null;
+	synchronized public void setAddress(String address) {
+		inputWaiterLock.lock();
+		try {
+			this.address = address;
+			moveGiven.signal();
+		} finally {
+			inputWaiterLock.unlock();
+		}
 	}
 	
 	@Override
@@ -161,7 +159,7 @@ public class TUIController extends Controller {
 			try {
 				if (input.startsWith(CMD_ADDRESS)) {
 					this.address = input.substring(CMD_ADDRESS.length()).trim();
-					addressEntered.signal();				
+					setAddress(address);				
 				} else if (input.startsWith(CMD_MOVE)) {
 					String[] args = input.substring(CMD_MOVE.length()).replaceAll("\\D", " ").trim().split("\\s+");
 					if (args.length != 2) {
@@ -170,15 +168,14 @@ public class TUIController extends Controller {
 					} else {
 						int x = Integer.parseInt(args[0]);
 						int y = Integer.parseInt(args[1]);
-						move = new Point(x,y);
-						moveGiven.signal();
+						setMove(new Point(x, y));
 					}
 				} else if (input.startsWith(CMD_CHAT)) {
 					input = input.substring(CMD_CHAT.length()).trim();
 					try {
 						client.getProtocoller().cmdChat(input);
 					} catch (IOException e) {
-						System.err.println("Error while parsing CHAT");
+						System.err.println("Error while sending CHAT");
 					}
 				} else if (input.startsWith(CMD_INVITE)) {
 					view.internalMessage("Yet to implement");

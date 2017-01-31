@@ -2,6 +2,8 @@ package client.player;
 
 import java.awt.Point;
 import java.util.ArrayList;
+
+import game.BoundedField;
 import game.Chip;
 import game.Field;
 
@@ -142,6 +144,26 @@ public class Yuno extends ComputerPlayer {
 			slice[j] = columns.get(j);
 		}
 		return new FieldSlice(slice, field.winLength);
+	}
+	
+	
+	//TESTING GOES HERE
+	
+	
+	public static void main(String[] args) {
+		Field field = new BoundedField(4, 4, 4, 4);
+		//First row
+		field.addChip(Chip.YELLOW, 0, 0);
+		field.addChip(Chip.YELLOW, 3, 0);
+		//Second row
+		field.addChip(Chip.RED, 0, 1);
+		//Third row
+		field.addChip(Chip.YELLOW, 1, 2);
+		//Fourth row
+		field.addChip(Chip.RED, 0, 3);
+		field.addChip(Chip.YELLOW, 0, 3);
+		field.addChip(Chip.RED, 1, 3);
+		field.addChip(Chip.RED, 3, 3);
 	}
 
 }

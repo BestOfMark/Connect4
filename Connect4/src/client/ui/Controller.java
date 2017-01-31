@@ -41,19 +41,6 @@ public abstract class Controller {
 	public abstract String requestAddress();
 	
 	/**
-	 * requests to enter the playerID of the wanted opponent.
-	 * @return the playerID of the wanted opponent or <code>null</code> if interrupted while waiting for input of the player.
-	 */
-	public abstract String requestPlayerID();
-	
-	/**
-	 * sets the next move to the point(x,y) of move
-	 * @param move a point(x,y)
-	 */
-	//@ requires move != null;
-	public abstract void setMove(Point move);
-
-	/**
 	 * Sets the view utilized by this player.
 	 * @param v the specified view the will be used by the player.
 	 */
