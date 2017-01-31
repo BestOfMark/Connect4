@@ -7,11 +7,10 @@ import client.player.ComputerPlayer;
 import client.player.HumanPlayer;
 import client.player.NaiveAI;
 import client.player.Player;
+import client.player.Yuno;
 import client.ui.Controller;
 import client.ui.GUI;
 import client.ui.GUIController;
-import client.ui.TUI;
-import client.ui.TUIController;
 import client.ui.View;
 import game.BoundedField;
 import game.Chip;
@@ -61,7 +60,6 @@ public class Client {
 	private Protocoller protocoller;
 	
 	/**
-	 * 
 	 * This <code>enum</code> provides all the possible states used by the <code>Client</code>. 
 	 *
 	 */
@@ -75,13 +73,14 @@ public class Client {
 	private GameState state = GameState.UNCONNECTED;
 	
 	/**
-	 * initialize the client
+	 * Initialize the client
 	 */
-	public Client() {
-		local = new HumanPlayer("Mark", Chip.RED);
-		control = new GUIController(this, local);
+	public Client(Player localPlayer) {
+		local = localPlayer;
+		control = new GUIController(this);
 		view = new GUI(this);
 		control.setView(view);
+		control.setPlayer(local);
 		view.setController(control);
 	}
 
@@ -314,9 +313,37 @@ public class Client {
 		return state == GameState.GAME_TURN || state == GameState.GAME_WAIT || state == GameState.GAME_AWAITING_RESPONSE;
 	}
 
+	public Player getLocalPlayer() {
+		return local;
+	}
+
+	public void setLocalPlayer(Player local) {
+		this.local = local;
+	}
+
+	
+	private static final double YUNO_PRUDENCE = 0.5D;
+	
 	public static void main(String[] args) {
-		Client c = new Client();
-		c.runtimeLoop();
+		args = new String[]{"Mark", "-H"};
+		if (args.length != 2) {
+			System.out.println("Specify username and type of player");
+		} else {
+			String username = args[0];
+			Player localPlayer;
+			if (args[1].toLowerCase().equals("-h")) {
+				localPlayer = new HumanPlayer(username, Chip.RED);
+			} else if (args[1].toLowerCase().equals("-n")) {
+				localPlayer = new NaiveAI(username, Chip.RED);
+			} else if (args[1].toLowerCase().equals("-s")) {
+				localPlayer = new Yuno(username, Chip.RED, YUNO_PRUDENCE);
+			} else {
+				System.out.println("Usage: [username] [-h (=Human) | -n (=Naive AI) | -s (=Smart AI)]");
+				return;
+			}
+			Client c = new Client(localPlayer);
+			c.runtimeLoop();
+		}
 	}
 
 
