@@ -176,8 +176,8 @@ public class Server {
 		new Server();
 	}
 
-	private static final int DIM_X = 2, DIM_Y = 2, DIM_Z = 2, WIN = 4;
-	private static final int THINK_TIME = 600000;
+	private static final int DIM_X = 4, DIM_Y = 4, DIM_Z = 4, WIN = 4;
+	public static final int THINK_TIME = 60000;
 	private static final int MAGIC_NUMBER = 0;
 	/**
 	 * Called when the <code>InputHandler</code> of a <code>NetworkPlayer</code> receives a <b>HELLO</b> command.
@@ -190,8 +190,6 @@ public class Server {
 		player.username = username;
 		player.cmdWelcome(player.id, THINK_TIME, MAGIC_NUMBER);
 		player.state = PlayerState.IDLE;
-		
-		
 	}
 	
 	public void gameRequested(NetworkPlayer player) {

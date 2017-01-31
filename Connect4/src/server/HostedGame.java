@@ -2,6 +2,8 @@ package server;
 
 import static client.Protocoller.*;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
 
 import game.BoundedField;
@@ -26,6 +28,8 @@ public class HostedGame {
 	private final Field field;
 	
 	private boolean gameOver = false;
+	
+	private Timer timeoutTimer;
 	
 	/**
 	 * Create a new game and inform the participants.
@@ -58,7 +62,20 @@ public class HostedGame {
 		//Create the playing field
 		field = new BoundedField(dimX, dimY, dimZ, winLength);
 		
+		//Schedule the timeout action
+		scheduleTimeout(playerWithTurn);
+		
 		System.out.println("New game between" + p1.toString() + " and " + p2.toString());
+	}
+	
+	private void scheduleTimeout(NetworkPlayer player) {
+		timeoutTimer = new Timer();
+		timeoutTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				timeOut(player);
+			}
+		}, Server.THINK_TIME);
 	}
 	
 	/**
@@ -95,6 +112,10 @@ public class HostedGame {
 				playerWithTurn = getOpponent(player);
 				p1.cmdMoveSuccess(x, y, player.id, playerWithTurn.id);
 				p2.cmdMoveSuccess(x, y, player.id, playerWithTurn.id);
+				
+				//Cancel the timeout and set the new timeout
+				timeoutTimer.cancel();
+				scheduleTimeout(playerWithTurn);
 				
 				//Check for game over
 				if (field.checkWin(player.chip)) {
@@ -135,6 +156,13 @@ public class HostedGame {
 	public void playerLeft(NetworkPlayer player, String reason) {
 		NetworkPlayer other = getOpponent(player);
 		other.cmdPlayerLeft(player.id, reason);
+		other.cmdGameEnd(other.id);
+		endGame();
+	}
+	
+	public void timeOut(NetworkPlayer player) {
+		NetworkPlayer other = getOpponent(player);
+		player.cmdGameEnd(player.id);
 		other.cmdGameEnd(other.id);
 		endGame();
 	}

@@ -1,10 +1,10 @@
-package server;
+package server.test;
 
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class ServerTest {
+public class ManualServerSystemTest {
 	
 	private static Socket sock;
 	
