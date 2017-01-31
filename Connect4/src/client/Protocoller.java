@@ -125,7 +125,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 			try {
 				String input;
 				while (!isCloseRequested && (input = br.readLine()) != null) {
-					client.getView().internalMessage("input from server received: " + input);
+					if (client.DEBUG) client.getView().internalMessage("input from server received: " + input);
 					try {
 						parse(input);
 					} catch (CommandFormatException e) {

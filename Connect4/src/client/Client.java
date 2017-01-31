@@ -50,6 +50,12 @@ public class Client {
 	private boolean exitRequested = false;
 	
 	/**
+	 * Variable used to set debug messages to visible or invisible. If <code>debug</code> == <code>true</code>, the debug messages are
+	 * Visible. If <code>debug</code> == <code>false</code>, the debug messages are invisible. 
+	 */
+	public static final boolean DEBUG = true;
+	
+	/**
 	 * Contains the supported features of the <code>Client</code>.
 	 */
 	private static final int MAGIC_NUMBER = 00;

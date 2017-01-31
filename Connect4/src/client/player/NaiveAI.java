@@ -3,6 +3,7 @@ package client.player;
 import java.awt.Point;
 import java.util.Random;
 
+import client.Client;
 import game.Chip;
 import game.Field;
 
@@ -20,7 +21,7 @@ public class NaiveAI extends ComputerPlayer {
 
 	@Override
 	public Point getMove(Field fieldCopy) {
-		System.out.println("AI MAKES A MOVE");
+		if (Client.DEBUG) System.out.println("AI MAKES A MOVE");
 		Point instantWin = instaWin(fieldCopy);
 		if (instantWin != null) return instantWin;
 		Random rand = new Random();
