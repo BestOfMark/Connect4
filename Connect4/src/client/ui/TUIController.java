@@ -9,6 +9,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import client.Client;
+import client.Protocoller;
 import client.player.ComputerPlayer;
 import client.player.Player;
 import game.Field;
@@ -105,7 +106,7 @@ public class TUIController extends Controller {
 		inputWaiterLock.lock();
 		try {
 			this.address = address;
-			moveGiven.signal();
+			addressEntered.signal();
 		} finally {
 			inputWaiterLock.unlock();
 		}
@@ -159,8 +160,15 @@ public class TUIController extends Controller {
 			try {
 				if (input.startsWith(CMD_ADDRESS)) {
 					this.address = input.substring(CMD_ADDRESS.length()).trim();
-					setAddress(address);				
+					setAddress(address);
+				} else if (input.startsWith(CMD_REQUEST)) {
+					try {
+						client.getProtocoller().cmdGameRequest();
+					} catch (IOException e) {
+						client.getView().internalMessage("Unable to request game");
+					}
 				} else if (input.startsWith(CMD_MOVE)) {
+				
 					String[] args = input.substring(CMD_MOVE.length()).replaceAll("\\D", " ").trim().split("\\s+");
 					if (args.length != 2) {
 						view.internalMessage("Wrong argument(s)");
@@ -195,6 +203,7 @@ public class TUIController extends Controller {
 	
 	private static final String CMD_ADDRESS = "address";
 	private static final String CMD_MOVE = "move";
+	private static final String CMD_REQUEST = "request";
 	private static final String CMD_EXIT = "exit";
 	private static final String CMD_CHAT = "chat";
 	private static final String CMD_INVITE = "invite";
