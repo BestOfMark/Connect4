@@ -202,7 +202,7 @@ public class Client {
 			state = GameState.GAME_TURN; 			
 		}
 		System.out.println(field.toString());
-		
+		view.update(field, "START");
 	}
 	
 	/**
@@ -258,6 +258,7 @@ public class Client {
 		} else {
 			view.internalMessage("Weird ID received");			
 		}
+		view.update(field, "END");
 		state = GameState.CONNECTED;
 	}
 
@@ -326,7 +327,7 @@ public class Client {
 	private static final double YUNO_PRUDENCE = 0.5D;
 	
 	public static void main(String[] args) {
-		args = new String[]{"Mark", "-n"};
+		args = new String[]{"Mark", "-h"};
 		if (args.length != 2) {
 			System.out.println("Specify username and type of player");
 		} else {
@@ -346,7 +347,4 @@ public class Client {
 			c.runtimeLoop();
 		}
 	}
-
-
-
 }
