@@ -136,5 +136,6 @@ public class HostedGame {
 		NetworkPlayer other = getOpponent(player);
 		other.cmdPlayerLeft(player.id, reason);
 		other.cmdGameEnd(other.id);
+		endGame();
 	}
 }

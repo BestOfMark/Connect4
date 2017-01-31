@@ -70,7 +70,7 @@ public class Client {
 	 *
 	 */
 	private enum GameState {
-		UNCONNECTED, IDLE, CONNECTED, GAME_TURN, GAME_AWAITING_RESPONSE, GAME_WAIT,  SHUTDOWN;
+		UNCONNECTED, IDLE, CONNECTED, GAME_TURN, GAME_AWAITING_RESPONSE, GAME_WAIT, SHUTDOWN;
 	}
 	
 	/**
@@ -259,11 +259,6 @@ public class Client {
 			view.internalMessage("Weird ID received");			
 		}
 		state = GameState.CONNECTED;
-		try {
-			protocoller.cmdGameRequest();
-		} catch (IOException e) {
-			view.internalMessage("unable to send gameRequest");
-		}
 	}
 
 	/**
@@ -331,7 +326,7 @@ public class Client {
 	private static final double YUNO_PRUDENCE = 0.5D;
 	
 	public static void main(String[] args) {
-		args = new String[]{"Mark", "-H"};
+		args = new String[]{"Mark", "-n"};
 		if (args.length != 2) {
 			System.out.println("Specify username and type of player");
 		} else {

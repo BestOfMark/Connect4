@@ -25,9 +25,9 @@ public class NaiveAI extends ComputerPlayer {
 		Random rand = new Random();
 		int x = -1, y = -1;
 		do {
-			x = rand.nextInt(fieldCopy.dimX - 1);
-			y = rand.nextInt(fieldCopy.dimY - 1);
-		} while (!fieldCopy.inBounds(x, y));
+			x = rand.nextInt(fieldCopy.dimX);
+			y = rand.nextInt(fieldCopy.dimY);
+		} while (!fieldCopy.inBounds(x, y) && !fieldCopy.columnFull(x, y));
 		return new Point(x,y);
 	}
 
