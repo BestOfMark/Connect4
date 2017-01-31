@@ -160,6 +160,7 @@ public class GUI extends View implements ActionListener {
 			moveOK.addActionListener(this);
 			moveDialog.add(BorderLayout.EAST, moveOK);
 			moveDialog.pack();
+			moveDialog.setLocationRelativeTo(frame);
 			moveDialog.setVisible(true);
 			try {
 				moveInputted.await(TUIController.MESSAGE_FREQUENCY, TimeUnit.SECONDS);
