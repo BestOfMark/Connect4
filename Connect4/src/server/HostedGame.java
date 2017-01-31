@@ -162,7 +162,7 @@ public class HostedGame {
 	
 	public void timeOut(NetworkPlayer player) {
 		NetworkPlayer other = getOpponent(player);
-		player.cmdGameEnd(player.id);
+		player.cmdGameEnd(other.id);
 		other.cmdGameEnd(other.id);
 		endGame();
 	}
