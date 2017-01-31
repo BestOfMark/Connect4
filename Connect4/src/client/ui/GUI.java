@@ -25,7 +25,7 @@ import client.Client;
 
 public class GUI extends View implements ActionListener {
 
-	private JFrame frame;
+	private JFrame frameGUI;
 	private JTextArea fieldArea;
 	private JTextArea internMessages;
 	private JTextArea chatMessages;
@@ -35,9 +35,9 @@ public class GUI extends View implements ActionListener {
 	
 	public GUI(Client client) {
 		super(client);
-		frame = new JFrame("Connect4 GUI");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(false);
+		frameGUI = new JFrame("Connect4 GUI");
+		frameGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frameGUI.setResizable(false);
 		
 		JPanel div = new JPanel(new BorderLayout());
 		JPanel p1 = new JPanel();
@@ -76,12 +76,12 @@ public class GUI extends View implements ActionListener {
 		gameStart.addActionListener(this);
 		gameStart.setEnabled(true);
 		
-		frame.add(BorderLayout.CENTER, div);
-		frame.add(BorderLayout.EAST, p3);
-		frame.add(BorderLayout.SOUTH, gameStart);
+		frameGUI.add(BorderLayout.CENTER, div);
+		frameGUI.add(BorderLayout.EAST, p3);
+		frameGUI.add(BorderLayout.SOUTH, gameStart);
 		
-		frame.pack();
-		frame.setVisible(true);
+		frameGUI.pack();
+		frameGUI.setVisible(true);
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public class GUI extends View implements ActionListener {
 	synchronized public String getMove() {
 		moveInputLock.lock();
 		try {
-			moveDialog = new JDialog(frame, "User input", false);
+			moveDialog = new JDialog(frameGUI, "User input", false);
 			moveDialog.setLayout(new BorderLayout());
 			JTextPane textPane = new JTextPane();
 			textPane.setEditable(false);
@@ -160,7 +160,7 @@ public class GUI extends View implements ActionListener {
 			moveOK.addActionListener(this);
 			moveDialog.add(BorderLayout.EAST, moveOK);
 			moveDialog.pack();
-			moveDialog.setLocationRelativeTo(frame);
+			moveDialog.setLocationRelativeTo(frameGUI);
 			moveDialog.setVisible(true);
 			try {
 				moveInputted.await(TUIController.MESSAGE_FREQUENCY, TimeUnit.SECONDS);
@@ -175,10 +175,10 @@ public class GUI extends View implements ActionListener {
 	}
 	
 	public String getAddress() {
-		return (String) JOptionPane.showInputDialog(frame, "Please enter the server address:");
+		return (String) JOptionPane.showInputDialog(frameGUI, "Please enter the server address:");
 	}
 	
 	public void close() {
-		frame.dispose();
+		frameGUI.dispose();
 	}
 }
