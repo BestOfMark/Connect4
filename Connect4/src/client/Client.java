@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import client.player.ComputerPlayer;
 import client.player.HumanPlayer;
+import client.player.NaiveAI;
 import client.player.Player;
 import client.ui.Controller;
 import client.ui.TUI;
@@ -75,7 +76,7 @@ public class Client {
 	 * initialize the client
 	 */
 	public Client() {
-		local = new HumanPlayer("Mark", Chip.RED);
+		local = new NaiveAI(Chip.RED);
 		control = new TUIController(this, local);
 		view = new TUI(this);
 		control.setView(view);
@@ -119,6 +120,7 @@ public class Client {
 					view.internalMessage("Obtained move " + p.toString());
 				} else {
 					view.internalMessage("Turn timed out");
+					//What happens next
 					break;
 				}
 				if (!field.inBounds(p.x, p.y) || field.columnFull(p.x, p.y)) {
@@ -180,11 +182,19 @@ public class Client {
 		enemy.setId(enemyID);
 		field = new BoundedField(boardSizeX, boardSizeY, boardSizeZ, winLength);
 		field.addObserver(view);
+		getView().internalMessage("Game started");
+		getView().internalMessage("Your opponent: " + enemyName);
+		getView().internalMessage("ID of your opponent: " + enemyID);
+		getView().internalMessage("X-Dimension of the board " + boardSizeX);
+		getView().internalMessage("Y-Dimension of the board " + boardSizeY);
+		getView().internalMessage("Z-Dimension of the board " + boardSizeZ);
+		getView().internalMessage("Length to win " + winLength);
 		if (startingPlayer == enemyID) {
 			state = GameState.GAME_WAIT;
 		} else {
 			state = GameState.GAME_TURN; 			
 		}
+		System.out.println(field.toString());
 		
 	}
 	
@@ -257,14 +267,19 @@ public class Client {
 	 * @param nextId ID of the <code>Player</code> whom has to make the next move.
 	 */
 	public void receivedMove(int x, int y, int moveId, int nextId) {
+		getView().internalMessage("x-pos of the move: " + x);
+		getView().internalMessage("y-pos of the move: " + y);
+		getView().internalMessage("Move made by ID: "  + moveId);
+		getView().internalMessage("Next playerID to make a move: " + nextId);
 		if (moveId == local.getId()) {
 			field.addChip(local.chip, x, y);
 			state = GameState.GAME_WAIT;
 		} else if (moveId == enemy.getId()) {
 			field.addChip(enemy.chip, x, y);
-			state = GameState.GAME_TURN;
+			if (!field.checkWin(enemy.chip)) state = GameState.GAME_TURN;
+			else state = GameState.GAME_WAIT;
 		} else if (moveId != local.getId() && moveId != enemy.getId()) {
-			System.out.println("UNKNOWN PLAYER DETECTED");
+			System.err.println("UNKNOWN PLAYER DETECTED");
 			state = GameState.UNCONNECTED;
 		}
 	}

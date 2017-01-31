@@ -110,12 +110,13 @@ public class BoundedField extends Field {
 		return copy;
 	}
 
-	private static final char EMPTY_SPACE = 'X';
+	private static final char EMPTY_SPACE = '-';
 	private static final String ROOM_BETWEEN_SLICES = "    ";
 	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Textual overview of the board:\n");
+		sb.append("x -->\n");
 			for (int y = 0; y < dimY; y++) {
 				for (int z = 0; z < dimZ; z++) {
 					for (int x = 0; x < dimX; x++) {
@@ -129,10 +130,10 @@ public class BoundedField extends Field {
 			}
 		sb.append('\n');
 		for (int z = 0; z < dimZ; z++) {
-			for (int x = 0; x < dimX - 1; x++ ) {
+			for (int x = 0; x < dimX - 3; x++ ) {
 				sb.append(" ");
 			}
-			sb.append(z);
+			sb.append("z=" + z);
 			for (int x = 0; x < dimX - 1; x++) {
 				sb.append(" ");
 			}

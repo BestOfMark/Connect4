@@ -20,13 +20,14 @@ public class NaiveAI extends ComputerPlayer {
 
 	@Override
 	public Point getMove(Field fieldCopy) {
+		System.out.println("AI MAKES A MOVE");
 		Point instantWin = instaWin(fieldCopy);
 		if (instantWin != null) return instantWin;
 		Random rand = new Random();
 		int x = -1, y = -1;
 		do {
-			x = rand.nextInt(fieldCopy.dimX);
-			y = rand.nextInt(fieldCopy.dimY);
+			x = rand.nextInt(fieldCopy.dimX - 1);
+			y = rand.nextInt(fieldCopy.dimY - 1);
 		} while (!fieldCopy.inBounds(x, y));
 		return new Point(x,y);
 	}

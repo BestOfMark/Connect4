@@ -47,8 +47,8 @@ public class TUIController extends Controller {
 
 	@Override
 	public Point requestMove(Field fCopy) {
-		view.internalMessage("What is your move?");
 		inputWaiterLock.lock();
+		view.internalMessage("What is your move?");
 		try {
 			if (player instanceof ComputerPlayer) {
 				return ((ComputerPlayer) player).getMove(fCopy);
