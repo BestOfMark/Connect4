@@ -7,12 +7,12 @@ import client.player.ComputerPlayer;
 import client.player.Player;
 import game.Field;
 
-public class GUIController extends TUIController {
+public class GUIController extends Controller {
 
 	private GUI gui;
 	
-	public GUIController(Client client, Player player) {
-		super(client, player);
+	public GUIController(Client client) {
+		super(client);
 	}
 	
 	@Override
@@ -50,6 +50,8 @@ public class GUIController extends TUIController {
 		}
 	}
 	
-	
-
+	@Override
+	public void close() {
+		gui.close();
+	}
 }

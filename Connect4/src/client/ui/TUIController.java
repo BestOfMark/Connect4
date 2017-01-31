@@ -34,8 +34,8 @@ public class TUIController extends Controller {
 	 * @param player specifies the player of the controller
 	 */
 	//@ requires client != 0; player != 0;
-	public TUIController(Client client, Player player) {
-		super(client, player);
+	public TUIController(Client client) {
+		super(client);
 		spawnInputHandler();
 	}
 	/**

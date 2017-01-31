@@ -1,7 +1,7 @@
 package client.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Point;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.print.attribute.standard.JobPriority;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -37,11 +36,13 @@ public class GUI extends View implements ActionListener {
 		super(client);
 		frame = new JFrame("Connect4 GUI");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
 		
 		JPanel div = new JPanel(new BorderLayout());
 		JPanel p1 = new JPanel();
 		p1.setBorder(BorderFactory.createTitledBorder("Field"));
 		fieldArea = new JTextArea(10, 50);
+		fieldArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 		p1.add(fieldArea);
 		div.add(BorderLayout.NORTH, p1);
 		
@@ -102,67 +103,68 @@ public class GUI extends View implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == gameStart) {
 			try {
-				client.getProtocoller().cmdGameRequest();
+				control.client.getProtocoller().cmdGameRequest();
 				internalMessage("Game request sent");
 			} catch (IOException e1) {
-				internalMessage("Could not send game request");
+				internalMessage("Something went wrong while sending game request");
 			}
 		} else if (e.getSource() == sendChat) {
 			if (!outwardChat.getText().equals("")) {
 				try {
 					client.getProtocoller().cmdChat(outwardChat.getText());
+					outwardChat.setText("");
 				} catch (IOException e1) {
 					System.err.println("Error while sending chat");
 					internalMessage("Something went wrong while sending chat");
 				}
 			}
-		} else if (e.getSource() == addressOK) {
-			lock.lock();
+		} else if (e.getSource() == moveOK) {
+			moveInputLock.lock();
 			try {
-				addressInput = jtf.getText();
-				addressInputted.signal();
+				moveInput = moveInputField.getText();
+				moveInputted.signal();
 			} finally {
-				lock.unlock();
+				moveInputLock.unlock();
 			}
 		}
 	}
 
-	private String addressInput = null;
-	private JButton addressOK;
-	private JTextField jtf;
-	private JDialog jd;
-	private static ReentrantLock lock = new ReentrantLock();
-	private static Condition addressInputted = lock.newCondition();
-	synchronized public String getAddress() {
-		lock.lock();
+	private String moveInput = null;
+	private JButton moveOK;
+	private JTextField moveInputField;
+	private JDialog moveDialog;
+	private static ReentrantLock moveInputLock = new ReentrantLock();
+	private static Condition moveInputted = moveInputLock.newCondition();
+	synchronized public String getMove() {
+		moveInputLock.lock();
 		try {
-			jd = new JDialog(frame, "User input", false);
-			jd.setLayout(new BorderLayout());
-			JTextPane jtp = new JTextPane();
-			jtp.setEditable(false);
-			jtp.setText("Please input the server address:");
-			jd.add(BorderLayout.NORTH, jtp);
-			jtf = new JTextField();
-			jd.add(BorderLayout.CENTER, jtf);
-			addressOK = new JButton("OK");
-			addressOK.addActionListener(this);
-			jd.add(BorderLayout.EAST, addressOK);
-			jd.pack();
-			jd.setVisible(true);
+			moveDialog = new JDialog(frame, "User input", false);
+			moveDialog.setLayout(new BorderLayout());
+			JTextPane textPane = new JTextPane();
+			textPane.setEditable(false);
+			textPane.setText("Please give your move");
+			moveDialog.add(BorderLayout.NORTH, textPane);
+			moveInputField = new JTextField();
+			moveDialog.add(BorderLayout.CENTER, moveInputField);
+			moveOK = new JButton("OK");
+			moveOK.addActionListener(this);
+			moveDialog.add(BorderLayout.EAST, moveOK);
+			moveDialog.pack();
+			moveDialog.setVisible(true);
 			try {
-				addressInputted.await(TUIController.MESSAGE_FREQUENCY, TimeUnit.SECONDS);
+				moveInputted.await(TUIController.MESSAGE_FREQUENCY, TimeUnit.SECONDS);
 			} catch (InterruptedException e) {
 				System.err.println("Got interrupted");
 			}
-			jd.dispose();
-			return addressInput;
+			moveDialog.dispose();
+			return moveInput;
 		} finally {
-			lock.unlock();
+			moveInputLock.unlock();
 		}
 	}
 	
-	public String getMove() {
-		return (String) JOptionPane.showInputDialog(frame, "Please give your move");
+	public String getAddress() {
+		return (String) JOptionPane.showInputDialog(frame, "Please enter the server address:");
 	}
 	
 	public void close() {

@@ -7,6 +7,8 @@ import game.Field;
 
 public abstract class ComputerPlayer extends Player {
 
+	private static final String PREFIX = "[AI]";
+	
 	/**
 	 * Calls the constructor of Player
 	 * @param username specifies the username of the ComputerPlayer
@@ -14,7 +16,7 @@ public abstract class ComputerPlayer extends Player {
 	 */
 	//@ requires chip != null;
 	public ComputerPlayer(String username, Chip chip) {
-		super(username, chip);
+		super(PREFIX + username, chip);
 	}
 
 	/**

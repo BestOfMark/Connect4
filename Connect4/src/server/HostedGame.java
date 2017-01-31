@@ -25,6 +25,8 @@ public class HostedGame {
 	 */
 	private final Field field;
 	
+	private boolean gameOver = false;
+	
 	/**
 	 * Create a new game and inform the participants.
 	 * @param server the server on which this game is hosted.
@@ -83,6 +85,7 @@ public class HostedGame {
 	//@ requires player != null;
 	synchronized public void moveReceived(NetworkPlayer player, int x, int y) {
 		//In the case of two simultaneous commands, make sure it is executed sequentially.
+		if (gameOver) return;
 		lock.lock();
 		try {
 			//Check if the move is legal
@@ -117,6 +120,7 @@ public class HostedGame {
 	 * Reset the states of the players, only if they have not been banned or errored.
 	 */
 	private void endGame() {
+		gameOver = true;
 		if (p1.state == PlayerState.IN_GAME) p1.disenroll(this);
 		if (p2.state == PlayerState.IN_GAME) p2.disenroll(this);
 		System.out.println("Game ended between " + p1.toString() + " and " + p2.toString());

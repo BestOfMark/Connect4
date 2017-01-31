@@ -14,8 +14,8 @@ public class Yuno extends ComputerPlayer {
 	
 	public Yuno(String username, Chip chip, double prudence) {
 		super(username, chip);
-		dumbAISelf = new NaiveAI(chip);
-		dumbAIOpponent = new NaiveAI(chip.other());
+		dumbAISelf = new NaiveAI("dumbSelf", chip);
+		dumbAIOpponent = new NaiveAI("dumbOpponent", chip.other());
 		this.prudence = prudence;
 	}
 

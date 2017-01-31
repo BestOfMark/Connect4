@@ -74,7 +74,7 @@ public class Server {
 		for (int i = 0; i < randperm.length; i++) {
 			NetworkPlayer player = connectedPlayers.get(randperm[i]);
 			//Check if the player is available
-			if (player != null && !player.equals(requester) && player.state == PlayerState.IDLE) return player;
+			if (player != null && !player.equals(requester) && player.state == PlayerState.WAITING) return player;
 		}
 		return null;
 	}
@@ -195,6 +195,7 @@ public class Server {
 	}
 	
 	public void gameRequested(NetworkPlayer player) {
+		player.state = PlayerState.WAITING;
 		//Looking for an opponent
 		NetworkPlayer opponent = getAvailableOpponent(player);
 		if (opponent != null) {
@@ -216,7 +217,11 @@ public class Server {
 	public void chatReceived(NetworkPlayer player, String msg) {
 		//Send to everyone, including the sender
 		Iterator<Integer> it = connectedPlayers.keySet().iterator();
-		while (it.hasNext()) connectedPlayers.get(it.next()).cmdBroadcastMessage(player.id, msg);
+		while (it.hasNext()) {
+			NetworkPlayer np = connectedPlayers.get(it.next());
+			//Send only if the player is still active on the server
+			if (np.state == PlayerState.IDLE || np.state == PlayerState.IN_GAME || np.state == PlayerState.WAITING)	np.cmdBroadcastMessage(player.id, msg);
+		}
 
 	}
 

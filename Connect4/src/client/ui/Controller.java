@@ -20,10 +20,8 @@ public abstract class Controller {
 	 * @param player specifies the player linked to this controller.
 	 */
 	//@ requires client != 0; player !=0; 
-	public Controller(Client client, Player player) {
+	public Controller(Client client) {
 		this.client = client;
-		this.player = player;
-		player.setController(this);
 	}
 	
 	/**
@@ -61,5 +59,15 @@ public abstract class Controller {
 	 * Closes all processes in the controller.
 	 */
 	public abstract void close();
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+		client.setLocalPlayer(player);
+		player.setController(this);
+	}
 
 }

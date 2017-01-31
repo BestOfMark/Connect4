@@ -9,14 +9,12 @@ import game.Field;
 
 public class NaiveAI extends ComputerPlayer {
 
-	private static final String NAME = "LookingForBetterName";
-	
 	/**
 	 * Calls the constructor of Player with the username LookingForBetterName
 	 * @param chip specifies the chip used by the ComputerPlayer
 	 */
-	public NaiveAI(Chip chip) {
-		super(NAME, chip);
+	public NaiveAI(String username, Chip chip) {
+		super(username, chip);
 	}
 
 	@Override
