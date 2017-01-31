@@ -327,7 +327,7 @@ public class Client {
 	private static final double YUNO_PRUDENCE = 0.5D;
 	
 	public static void main(String[] args) {
-		args = new String[]{"Mark", "-h"};
+		args = new String[]{"AllesKaas", "-h"};
 		if (args.length != 2) {
 			System.out.println("Specify username and type of player");
 		} else {

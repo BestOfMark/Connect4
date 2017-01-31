@@ -135,7 +135,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 			} catch (IOException e) {
 				
 				if (!isCloseRequested){
-					client.getView().internalMessage("Fatal Error in Protocol.InputHandler.");
+					client.getView().internalMessage("Connection with Server lost.");
 //						(ih = new InputHandler()).start();
 					client.shutdown();
 				}
