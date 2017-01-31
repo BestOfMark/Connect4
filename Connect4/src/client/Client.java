@@ -241,7 +241,7 @@ public class Client {
 	 */
 	public void opponentLeft(int enemyID, String string) {
 		view.internalMessage(string);
-		state = GameState.IDLE;
+		state = GameState.CONNECTED;
 	}
 
 	/**
