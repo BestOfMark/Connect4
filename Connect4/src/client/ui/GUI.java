@@ -55,7 +55,7 @@ public class GUI extends View implements ActionListener {
 		internMessages.setLineWrap(true);
 		internMessages.setWrapStyleWord(true);
 		JScrollPane scroll = new JScrollPane (internMessages, 
-				   JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		p2.add(scroll);
 		div.add(BorderLayout.SOUTH, p2);
 		
