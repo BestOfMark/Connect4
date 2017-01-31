@@ -16,6 +16,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -41,20 +42,29 @@ public class GUI extends View implements ActionListener {
 		JPanel div = new JPanel(new BorderLayout());
 		JPanel p1 = new JPanel();
 		p1.setBorder(BorderFactory.createTitledBorder("Field"));
-		fieldArea = new JTextArea(10, 50);
+		fieldArea = new JTextArea(10, 80);
 		fieldArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		fieldArea.setEditable(false);
 		p1.add(fieldArea);
 		div.add(BorderLayout.NORTH, p1);
 		
 		JPanel p2 = new JPanel();
 		p2.setBorder(BorderFactory.createTitledBorder("Console"));
 		internMessages = new JTextArea(10, 50);
-		p2.add(internMessages);
+		internMessages.setEditable(false);
+		internMessages.setLineWrap(true);
+		internMessages.setWrapStyleWord(true);
+		JScrollPane scroll = new JScrollPane (internMessages, 
+				   JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		p2.add(scroll);
 		div.add(BorderLayout.SOUTH, p2);
 		
 		JPanel p3 = new JPanel(new BorderLayout());
 		p3.setBorder(BorderFactory.createTitledBorder("Chat"));
 		chatMessages = new JTextArea(21, 30);
+		chatMessages.setEditable(false);
+		chatMessages.setLineWrap(true);
+		chatMessages.setWrapStyleWord(true);
 		outwardChat = new JTextField();
 		sendChat = new JButton("Send");
 		sendChat.addActionListener(this);
