@@ -134,13 +134,10 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 				}
 			} catch (IOException e) {
 				
-				try {
-					if (!isCloseRequested){
-						client.getView().internalMessage("Error in Protocol.InputHandler. Trying to restore...");
-						(ih = new InputHandler()).start();
-					}
-				} catch (IOException e1) {
-					client.getView().internalMessage(e.getMessage());
+				if (!isCloseRequested){
+					client.getView().internalMessage("Fatal Error in Protocol.InputHandler.");
+//						(ih = new InputHandler()).start();
+					client.shutdown();
 				}
 			}
 		}
