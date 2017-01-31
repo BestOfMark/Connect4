@@ -17,6 +17,7 @@ public class GUIController extends Controller {
 	
 	@Override
 	public void setView(View v) {
+		view = v;
 		if (v instanceof GUI) {
 			gui = (GUI) v;
 		}
