@@ -90,8 +90,10 @@ public class Server {
 	 * Close the <code>Porter</code>, such that the server cannot listen for new connections 
 	 * anymore.
 	 */
+	@SuppressWarnings("deprecation")
 	public void close() {
 		porter.isCloseRequested = true;
+		porter.stop();
 		Iterator<Integer> it = connectedPlayers.keySet().iterator();
 		while (it.hasNext()) {
 			NetworkPlayer player = connectedPlayers.get(it.next());
