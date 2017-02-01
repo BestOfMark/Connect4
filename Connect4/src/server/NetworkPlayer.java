@@ -238,7 +238,7 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 					HostedGame.LOCK.lock();
 					try {
 						game.incrementSendCounter();
-						System.out.println("D: Incremented");
+//						System.out.println("D: Incremented");
 					} finally {
 						HostedGame.LOCK.unlock();
 					}

@@ -124,12 +124,12 @@ public class HostedGame {
 	synchronized public void moveReceived(NetworkPlayer player, int x, int y) {
 		//In the case of two simultaneous commands, make sure it is executed sequentially.
 		if (gameOver) return;
-		System.out.println("D: Now trying to acquire lock");
+//		System.out.println("D: Now trying to acquire lock");
 		LOCK.lock();
 		try {
 			//Check if the move is legal
 			if (player.equals(playerWithTurn) && field.inBounds(x, y) && !field.columnFull(x, y)) {
-				System.out.println("D: Legal move");
+//				System.out.println("D: Legal move");
 				
 				//Legal move
 				field.addChip(player.chip, x, y);
@@ -138,7 +138,7 @@ public class HostedGame {
 				p1.cmdMoveSuccess(x, y, player.id, playerWithTurn.id);
 				p2.cmdMoveSuccess(x, y, player.id, playerWithTurn.id);
 				
-				System.out.println("D: Waiting for signals");
+//				System.out.println("D: Waiting for signals");
 				//Wait for the moves to be sent
 				try {
 					MOVES_SENT.await();
@@ -146,7 +146,7 @@ public class HostedGame {
 					System.err.println("Awaiting moves sent got interrupted");
 				}
 				
-				System.out.println("D: Signals got");
+//				System.out.println("D: Signals got");
 				
 				//Cancel the timeout and set the new timeout
 				timeoutTimer.cancel();
@@ -176,7 +176,7 @@ public class HostedGame {
 	
 	public void incrementSendCounter() {
 		if (++sendCounter == 2) {
-			System.out.println("D: Will now unlock");
+//			System.out.println("D: Will now unlock");
 			LOCK.lock();
 			try {
 				MOVES_SENT.signal();
@@ -193,6 +193,7 @@ public class HostedGame {
 		gameOver = true;
 		if (p1.state == PlayerState.IN_GAME) p1.disenroll(this);
 		if (p2.state == PlayerState.IN_GAME) p2.disenroll(this);
+		timeoutTimer.cancel();
 		System.out.println("Game ended between " + p1.toString() + " and " + p2.toString());
 	}
 

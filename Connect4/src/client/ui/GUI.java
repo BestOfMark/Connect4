@@ -139,7 +139,7 @@ public class GUI extends View implements ActionListener {
 		}
 	}
 
-	private String moveInput = null;
+	private String moveInput;
 	private JButton moveOK;
 	private JTextField moveInputField;
 	private JDialog moveDialog;
@@ -148,6 +148,7 @@ public class GUI extends View implements ActionListener {
 	synchronized public String getMove() {
 		moveInputLock.lock();
 		try {
+			moveInput = null;
 			moveDialog = new JDialog(frameGUI, "User input", false);
 			moveDialog.setLayout(new BorderLayout());
 			JTextPane textPane = new JTextPane();
@@ -163,7 +164,7 @@ public class GUI extends View implements ActionListener {
 			moveDialog.setLocationRelativeTo(frameGUI);
 			moveDialog.setVisible(true);
 			try {
-				moveInputted.await(TUIController.MESSAGE_FREQUENCY, TimeUnit.SECONDS);
+				moveInputted.await(control.timeout, TimeUnit.SECONDS);
 			} catch (InterruptedException e) {
 				System.err.println("Got interrupted");
 			}

@@ -78,6 +78,8 @@ public class Client {
 	 */
 	private GameState state = GameState.UNCONNECTED;
 	
+	private ComputerPlayer dumbAI;
+	
 	/**
 	 * Initialize the client
 	 */
@@ -88,6 +90,7 @@ public class Client {
 		control.setView(view);
 		control.setPlayer(local);
 		view.setController(control);
+		dumbAI = new NaiveAI(local.username, local.chip);
 	}
 
 	/**
@@ -129,8 +132,9 @@ public class Client {
 					view.internalMessage("Obtained move " + p.toString());
 				} else {
 					view.internalMessage("Turn timed out");
+					
 					//What happens next
-					break;
+					p = dumbAI.getMove(field.deepCopy());
 				}
 				if (!field.inBounds(p.x, p.y) || field.columnFull(p.x, p.y)) {
 					if (local instanceof ComputerPlayer) {
@@ -161,6 +165,8 @@ public class Client {
 		}
 	}
 	
+	private static final double TIMEOUT_FACTOR = 0.9D;
+	
 	/**
 	 * Sets the timeout time, the features of the game, the usedID of the <code>Player</code>.
 	 * @param userID userID that was received by the server
@@ -169,7 +175,7 @@ public class Client {
 	 */
 	//@ requires milles > 0;
 	protected void welcomed(int userID, int millis, int magicNumber) {
-		control.setTimeout(millis);
+		control.setTimeout((int) (TIMEOUT_FACTOR * millis));
 		local.setId(userID);
 		state = GameState.CONNECTED;
 		if (DEBUG) System.out.println(state);
