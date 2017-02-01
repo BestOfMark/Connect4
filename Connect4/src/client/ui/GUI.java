@@ -38,6 +38,7 @@ public class GUI extends View implements ActionListener {
 	 * Create a GUI to interact with the client.
 	 * @param client reference to the <code>Client</code> object
 	 */
+	//@ requires client != null;
 	public GUI(Client client) {
 		super(client);
 		
@@ -101,6 +102,7 @@ public class GUI extends View implements ActionListener {
 	}
 
 	@Override
+	//@ requires o != null;
 	public void update(Observable o, Object arg) {
 		fieldArea.setText(o.toString());
 		if (arg != null && arg.equals("START")) {
