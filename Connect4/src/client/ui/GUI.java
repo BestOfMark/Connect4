@@ -164,7 +164,7 @@ public class GUI extends View implements ActionListener {
 			moveDialog.setLocationRelativeTo(frameGUI);
 			moveDialog.setVisible(true);
 			try {
-				moveInputted.await(control.timeout, TimeUnit.SECONDS);
+				moveInputted.await(control.timeout, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
 				System.err.println("Got interrupted");
 			}
