@@ -14,12 +14,12 @@ import client.CommandFormatException;
 public class InputHandler extends Thread {
 	
 	/**
-	 * The reader used to read the incoming commands
+	 * The reader used to read the incoming commands.
 	 */
 	private BufferedReader br;
 	
 	/**
-	 * Reference to the associated player
+	 * Reference to the associated player.
 	 */
 	private final NetworkPlayer player;
 	
@@ -29,33 +29,38 @@ public class InputHandler extends Thread {
 	private final Server server;
 	
 	/**
-	 * If the associated player is in-game then this is a reference to the game the player is involved in.
+	 * If the associated player is in-game then this is a reference to the game the player is 
+	 * involved in.
 	 */
 	//@invariant player.state == PlayerState.IN_GAME ==> game != null;
 	private HostedGame game;
 	
 	/**
-	 * Denial of Service (DoS) counter. Keeps track of the amount of requests the client has send in a short amount of time. 
-	 * If the amount exceeds a certain threshold the client is given a denial of service, in this case the server will not listen
-	 * to it anymore. Every so often the value is decremented such that the denial of service is only given if the client makes 
-	 * many requests in a short amount of time.
+	 * Denial of Service (DoS) counter. Keeps track of the amount of requests the client has send 
+	 * in a short amount of time. If the amount exceeds a certain threshold the client is given a 
+	 * denial of service, in this case the server will not listen to it anymore. Every so often the 
+	 * value is decremented such that the denial of service is only given if the client makes many 
+	 * requests in a short amount of time.
 	 */
 	//@ invariant dos >= 0;
 	private int dos = 0;
 	
 	/**
-	 * If this threshold is reached the player will be banned for sending too many requests in a short amount of time.
+	 * If this threshold is reached the player will be banned for sending too many requests in a 
+	 * short amount of time.
 	 */
 	private static final int DOS_THRESHOLD = Integer.MAX_VALUE;
 	
 	/**
-	 * The Denial of Service counter is decremented every this amount of milliseconds. A client should not send requests faster than this rate
+	 * The Denial of Service counter is decremented every this amount of milliseconds. A client 
+	 * should not send requests faster than this rate
 	 * or it might get banned from the server.
 	 */
 	private static final int DOS_DECREMENT_INTERVAL = 1;
 	
 	/**
-	 * Construct a player's input handler, which listens to commands send from the client to the server.
+	 * Construct a player's input handler, which listens to commands send from the client to the 
+	 * server.
 	 * @param player the player whose input handler this is
 	 * @param sock the socket through which the player is connected
 	 * @param server reference to the server the player is connected to
@@ -86,14 +91,16 @@ public class InputHandler extends Thread {
 
 	/**
 	 * Adds a certain value to the DoS counter.
-	 * @param val the DoS counter is increased with this value. Supposed to be positive, with an exception for the DoS decrementer thread.
+	 * @param val the DoS counter is increased with this value. Supposed to be positive, with an 
+	 * exception for the DoS decrementer thread.
 	 */
 	synchronized private void updateRequests(int val) {
 		dos += val;
 		//Keep the DoS counter positive
-		if (dos < 0) dos = 0;
-		//Ban the player if the threshold is reached
-		else if (dos >= DOS_THRESHOLD) {
+		if (dos < 0) {
+			dos = 0;
+		} else if (dos >= DOS_THRESHOLD) {
+			//Ban the player if the threshold is reached
 			close();
 			System.out.println(player.toString() + ": " + NetworkPlayer.MSG_BANNED_REQUESTS);
 			if (player.state == PlayerState.IN_GAME) {
@@ -105,8 +112,9 @@ public class InputHandler extends Thread {
 	}
 	
 	/**
-	 * If this variable is set to <code>true</code> then the <code>run()</code> method will break from the <code>while</code>-loop in the next iteration.
-	 * Consequently, the <code>InputHandler</code> thread finishes and the server will no longer listen to the associated client.
+	 * If this variable is set to <code>true</code> then the <code>run()</code> method will break 
+	 * from the <code>while</code>-loop in the next iteration. Consequently, the <code>InputHandler
+	 * </code> thread finishes and the server will no longer listen to the associated client.
 	 */
 	private boolean isCloseRequested = false;
 	
@@ -124,7 +132,11 @@ public class InputHandler extends Thread {
 	public void run() {
 		String input;
 		try {
-			while (!isCloseRequested && (input = br.readLine()) != null) {
+			while (!isCloseRequested) {
+				input = br.readLine();
+				if (input == null) {
+					return;
+				}
 				//Command received
 				System.out.println(player.username + "(" + player.id + "): " + input);
 				updateRequests(1);
@@ -140,7 +152,9 @@ public class InputHandler extends Thread {
 			}
 		} catch (IOException e) {
 			//The inputstream errored
-			if (player.state == PlayerState.IN_GAME) game.playerLeft(player, NetworkPlayer.MSG_ERRORED);
+			if (player.state == PlayerState.IN_GAME) {
+				game.playerLeft(player, NetworkPlayer.MSG_ERRORED);
+			}
 			player.state = PlayerState.ERRORED;
 			System.err.println("The inputhandler of " + player.toString() + " errored");
 		}
@@ -158,12 +172,13 @@ public class InputHandler extends Thread {
 	 * @throws CommandFormatException if the command's keyword is invalid and/or its arguments
 	 */
 	public void parse(String input) throws CommandFormatException {
+		String inputCopy = input;
 		//Check for all known keywords
-		if (input.startsWith(CLIENT_HELLO)) {
+		if (inputCopy.startsWith(CLIENT_HELLO)) {
 			//Remove the keyword from the beginning of the command
-			input = input.substring(CLIENT_HELLO.length()).trim();
+			inputCopy = inputCopy.substring(CLIENT_HELLO.length()).trim();
 			//Retrieve the arguments in an array
-			String[] args = input.split(COMMAND_DELIMITER);
+			String[] args = inputCopy.split(COMMAND_DELIMITER);
 			//Parse the arguments and call the correct method
 			try {
 				server.hello(
@@ -173,16 +188,17 @@ public class InputHandler extends Thread {
 					Integer.parseInt(args[2]));
 			} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
 				//One or more arguments could not be parsed so an exception is thrown
-				throw new CommandFormatException(CLIENT_HELLO, input, EXCEPTION_SOURCE_NAME);
+				throw new CommandFormatException(CLIENT_HELLO, inputCopy, EXCEPTION_SOURCE_NAME);
 			}
-		} else if (input.startsWith(CLIENT_MOVE)) {
-			//From here on no more comments. The logic is the same as the preceding conditional code block
+		} else if (inputCopy.startsWith(CLIENT_MOVE)) {
+			//From here on no more comments. The logic is the same as the preceding conditional 
+			//code block
 			if (!(player.state == PlayerState.IN_GAME)) {
-				player.cmdReportIllegal(input);
+				player.cmdReportIllegal(inputCopy);
 				player.newTransgression();
 			}
-			input = input.substring(CLIENT_MOVE.length()).trim();
-			String[] args = input.split(COMMAND_DELIMITER);
+			inputCopy = inputCopy.substring(CLIENT_MOVE.length()).trim();
+			String[] args = inputCopy.split(COMMAND_DELIMITER);
 			if (game == null) {
 				//Client sent a move while not in-game
 				System.err.println(player.toString() + " is not in-game");
@@ -194,19 +210,19 @@ public class InputHandler extends Thread {
 					Integer.parseInt(args[0]),
 					Integer.parseInt(args[1]));
 			} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
-				throw new CommandFormatException(CLIENT_MOVE, input, EXCEPTION_SOURCE_NAME);
+				throw new CommandFormatException(CLIENT_MOVE, inputCopy, EXCEPTION_SOURCE_NAME);
 			}
-		} else if (input.startsWith(CLIENT_CHAT)) {
-			input = input.substring(CLIENT_CHAT.length()).trim();
-			server.chatReceived(player, input);
-		} else if (input.startsWith(CLIENT_REQUEST)) {
+		} else if (inputCopy.startsWith(CLIENT_CHAT)) {
+			inputCopy = inputCopy.substring(CLIENT_CHAT.length()).trim();
+			server.chatReceived(player, inputCopy);
+		} else if (inputCopy.startsWith(CLIENT_REQUEST)) {
 			server.gameRequested(player);
 		} else {
 			//Extract the unknown command keyword if applicable.
-			int index = input.indexOf(' ');
-			String unknownCommand = (index != -1) ? input.substring(0, index) : "";
+			int index = inputCopy.indexOf(' ');
+			String unknownCommand = (index != -1) ? inputCopy.substring(0, index) : "";
 			
-			throw new CommandFormatException(unknownCommand, input, EXCEPTION_SOURCE_NAME);
+			throw new CommandFormatException(unknownCommand, inputCopy, EXCEPTION_SOURCE_NAME);
 		}
 	}
 }

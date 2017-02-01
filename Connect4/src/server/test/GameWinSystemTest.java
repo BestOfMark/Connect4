@@ -18,14 +18,16 @@ public class GameWinSystemTest {
 			//Set up fake client 1 (c1)
 			Socket sock1 = new Socket("localhost", 666);
 			BufferedReader br1 = new BufferedReader(new InputStreamReader(sock1.getInputStream()));
-			BufferedWriter bw1 = new BufferedWriter(new OutputStreamWriter(sock1.getOutputStream()));
+			BufferedWriter bw1 = new BufferedWriter(new OutputStreamWriter(
+					sock1.getOutputStream()));
 			brMap.put(1, br1);
 			bwMap.put(1, bw1);
 			
 			//Set up fake client 2 (c1)
 			Socket sock2 = new Socket("localhost", 666);
 			BufferedReader br2 = new BufferedReader(new InputStreamReader(sock2.getInputStream()));
-			BufferedWriter bw2 = new BufferedWriter(new OutputStreamWriter(sock2.getOutputStream()));
+			BufferedWriter bw2 = new BufferedWriter(new OutputStreamWriter(
+					sock2.getOutputStream()));
 			brMap.put(2, br2);
 			bwMap.put(2, bw2);
 			

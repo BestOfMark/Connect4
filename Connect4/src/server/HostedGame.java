@@ -34,7 +34,8 @@ public class HostedGame {
 	private boolean gameOver = false;
 	
 	/**
-	 * The logic to be executed once a player's time to send a move times out is scheduled on this timer.
+	 * The logic to be executed once a player's time to send a move times out is scheduled on 
+	 * this timer.
 	 */
 	private Timer timeoutTimer;
 	
@@ -48,7 +49,8 @@ public class HostedGame {
 	 * @param dimZ the z-dimension of the field used in this game.
 	 * @param winLength the number of chips in a row needed to win this game.
 	 */
-	public HostedGame(Server server, NetworkPlayer player1, NetworkPlayer player2, int dimX, int dimY, int dimZ, int winLength) {
+	public HostedGame(Server server, NetworkPlayer player1, NetworkPlayer player2, int dimX, 
+			int dimY, int dimZ, int winLength) {
 		//Initialize the participating players
 		p1 = player1;
 		p2 = player2;
@@ -76,8 +78,8 @@ public class HostedGame {
 	}
 	
 	/**
-	 * Schedule the handling of a timeout once a the player with the current turn doesn't send his move before the timeout occurs.
-	 * If a move is made in-time, this task is cancelled.
+	 * Schedule the handling of a timeout once a the player with the current turn doesn't send 
+	 * his move before the timeout occurs. If a move is made in-time, this task is cancelled.
 	 * @param player the player who has the turn
 	 */
 	private void scheduleTimeout(NetworkPlayer player) {
@@ -92,11 +94,11 @@ public class HostedGame {
 			public void run() {
 				timeOut(player);
 			}
-		}, Server.THINK_TIME);
+		}, Server.thinkTime);
 	}
 	
 	/**
-	 * Find the player who is the opponent of the player passed in the argument
+	 * Find the player who is the opponent of the player passed in the argument.
 	 * @param inquirer the player whose opponent is returned
 	 * @return the other player in this <code>HostedGame</code>
 	 */
@@ -113,9 +115,11 @@ public class HostedGame {
 	public static final Condition MOVES_SENT = LOCK.newCondition();
 	
 	/**
-	 * Process a move received from one of the clients in this <code>HostedGame</code>. If the move is valid - i.e. the player who made 
-	 * it has the turn <b>and</b> the chip can be added to the field - the field is updated and both connected players are notified. After
-	 * every move the method checks if the player has won or if the field is full and sends the GAME_END command to the players accordingly.
+	 * Process a move received from one of the clients in this <code>HostedGame</code>. 
+	 * If the move is valid - i.e. the player who made it has the turn <b>and</b> the 
+	 * chip can be added to the field - the field is updated and both connected players 
+	 * are notified. After every move the method checks if the player has won or if the 
+	 * field is full and sends the GAME_END command to the players accordingly.
 	 * @param player the player from whom the command originates
 	 * @param x the x-coordinate of the desired move
 	 * @param y the y-coordinate of the desired move
@@ -123,7 +127,9 @@ public class HostedGame {
 	//@ requires player != null;
 	synchronized public void moveReceived(NetworkPlayer player, int x, int y) {
 		//In the case of two simultaneous commands, make sure it is executed sequentially.
-		if (gameOver) return;
+		if (gameOver) {
+			return;
+		}
 //		System.out.println("D: Now trying to acquire lock");
 		LOCK.lock();
 		try {
@@ -164,7 +170,8 @@ public class HostedGame {
 				}
 			} else {
 				//Illegal move. Add a transgression
-				player.cmdReportIllegal(String.join(COMMAND_DELIMITER, SERVER_ILLEGAL, CLIENT_MOVE, String.valueOf(x), String.valueOf(y)));
+				player.cmdReportIllegal(String.join(COMMAND_DELIMITER, SERVER_ILLEGAL, CLIENT_MOVE, 
+						String.valueOf(x), String.valueOf(y)));
 				player.newTransgression();
 			}
 		} finally {
@@ -191,14 +198,18 @@ public class HostedGame {
 	 */
 	private void endGame() {
 		gameOver = true;
-		if (p1.state == PlayerState.IN_GAME) p1.disenroll(this);
-		if (p2.state == PlayerState.IN_GAME) p2.disenroll(this);
+		if (p1.state == PlayerState.IN_GAME) {
+			p1.disenroll(this);
+		}
+		if (p2.state == PlayerState.IN_GAME) {
+			p2.disenroll(this);
+		}
 		timeoutTimer.cancel();
 		System.out.println("Game ended between " + p1.toString() + " and " + p2.toString());
 	}
 
 	/**
-	 * Notify the opponent when a player has been banned
+	 * Notify the opponent when a player has been banned.
 	 * @param player the player who is banned
 	 * @param reason the reason of the ban. This is sent to the opponent
 	 */
@@ -212,7 +223,8 @@ public class HostedGame {
 	}
 	
 	/**
-	 * Called when the current player timed out. The player that timed out is the loser and both clients are notified of the game end.
+	 * Called when the current player timed out. The player that timed out is the loser and both 
+	 * clients are notified of the game end.
 	 * @param player the player that timed out
 	 */
 	//@ requires player != null;

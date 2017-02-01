@@ -139,12 +139,20 @@ public class GUI extends View implements ActionListener {
 		}
 	}
 
+	//Fields used in the pop-up dialog
 	private String moveInput;
 	private JButton moveOK;
 	private JTextField moveInputField;
 	private JDialog moveDialog;
 	private static ReentrantLock moveInputLock = new ReentrantLock();
 	private static Condition moveInputted = moveInputLock.newCondition();
+	
+	/**
+	 * Spawn a pop-up that requests a move from the user. The method blocks until input is 
+	 * received from the user or the method times out after the timeout time specified in 
+	 * the controller.
+	 * @return the move that the player entered, or null if the move timed out.
+	 */
 	synchronized public String getMove() {
 		moveInputLock.lock();
 		try {

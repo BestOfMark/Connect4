@@ -3,7 +3,7 @@ package server.protocol;
 public interface ScoreboardCapabilityServer {
 
 	/**
-	 * Send one scoreboard entry to a client that invoked the GETSCOREBOARD command
+	 * Send one scoreboard entry to a client that invoked the GETSCOREBOARD command.
 	 * @param id the id of the player to which this entry belongs
 	 * @param name the chosen username of the player
 	 * @param score the amount of times this player has won
