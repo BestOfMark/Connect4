@@ -174,6 +174,8 @@ public class GUI extends View implements ActionListener {
 		moveInputLock.lock();
 		try {
 			moveInput = null;
+			
+			//Create the pop-up JDialog and its subcomponents
 			moveDialog = new JDialog(frameGUI, "User input", false);
 			moveDialog.setLayout(new BorderLayout());
 			JTextPane textPane = new JTextPane();
