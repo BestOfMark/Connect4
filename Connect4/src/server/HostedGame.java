@@ -27,8 +27,14 @@ public class HostedGame {
 	 */
 	private final Field field;
 	
+	/**
+	 * Indicates if this game is still running or not.
+	 */
 	private boolean gameOver = false;
 	
+	/**
+	 * The logic to be executed once a player's time to send a move times out is scheduled on this timer.
+	 */
 	private Timer timeoutTimer;
 	
 	/**
@@ -68,8 +74,16 @@ public class HostedGame {
 		System.out.println("New game between" + p1.toString() + " and " + p2.toString());
 	}
 	
+	/**
+	 * Schedule the handling of a timeout once a the player with the current turn doesn't send his move before the timeout occurs.
+	 * If a move is made in-time, this task is cancelled.
+	 * @param player the player who has the turn
+	 */
 	private void scheduleTimeout(NetworkPlayer player) {
+		//Create a new timer
 		timeoutTimer = new Timer();
+		
+		//Schedule the timeout handling after the thinking time expires
 		timeoutTimer.schedule(new TimerTask() {
 			@Override
 			public void run() {
@@ -89,6 +103,9 @@ public class HostedGame {
 		return (p1.equals(inquirer)) ? p2 : p1;
 	}
 
+	/**
+	 * The lock that should be acquired before a received move is handled.
+	 */
 	private final ReentrantLock lock = new ReentrantLock();
 	
 	/**
@@ -160,6 +177,10 @@ public class HostedGame {
 		endGame();
 	}
 	
+	/**
+	 * Called when the current player timed out. The player that timed out is the loser and both clients are notified of the game end.
+	 * @param player the player that timed out
+	 */
 	public void timeOut(NetworkPlayer player) {
 		NetworkPlayer other = getOpponent(player);
 		player.cmdGameEnd(other.id);

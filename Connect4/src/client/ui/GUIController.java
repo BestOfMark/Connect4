@@ -33,7 +33,9 @@ public class GUIController extends Controller {
 	@Override
 	public Point requestMove(Field fCopy) {
 		if (player instanceof ComputerPlayer) {
-			return ((ComputerPlayer) player).getMove(fCopy);
+			Point move = ((ComputerPlayer) player).getMove(fCopy);
+			System.out.println("AI: " + move);
+			return move;
 		} else {
 			String input = gui.getMove();
 			if (input == null) return null;

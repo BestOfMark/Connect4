@@ -20,9 +20,10 @@ public abstract class ComputerPlayer extends Player {
 	}
 
 	/**
-	 * Starts the thinking process of the ComputerPlayer
+	 * Starts the thinking process of the <code>ComputerPlayer</code> and returns the move the AI has determined on.
 	 * @param fieldCopy is a copy of the current playing field used by the ComputerPlayer to determine
 	 * the next move.
+	 * @return the move in the form of a java.awt.Point
 	 */
 	//@ requires fieldCopy != null;
 	abstract public Point getMove(Field fieldCopy);

@@ -91,7 +91,8 @@ public class Client {
 	}
 
 	/**
-	 * Handles communication with the <code>Player</code> and uses a <code>Protocoller</code> to communicate with the server.
+	 * The main loop of the client. Handles communication with the <code>Player</code> and uses a <code>Protocoller</code> 
+	 * to communicate with the server.
 	 */
 	private void runtimeLoop() {
 		while (!exitRequested) {
@@ -201,7 +202,6 @@ public class Client {
 		} else {
 			state = GameState.GAME_TURN; 			
 		}
-		System.out.println(field.toString());
 		view.update(field, "START");
 	}
 	
@@ -311,40 +311,82 @@ public class Client {
 		return protocoller;
 	}
 	
+	/**
+	 * Check if the client is currently in-game on the server
+	 * @return <code>true</code> if the client is in game, <code>false</code> otherwise.
+	 */
+	//@ ensures \result = state == GameState.GAME_TURN || state == GameState.GAME_WAIT || state == GameState.GAME_AWAITING_RESPONSE;
 	/*@ pure */public boolean inGame() {
 		return state == GameState.GAME_TURN || state == GameState.GAME_WAIT || state == GameState.GAME_AWAITING_RESPONSE;
 	}
 
-	public Player getLocalPlayer() {
-		return local;
-	}
-
+	/**
+	 * Set a reference to the client's <code>Player</code> object.
+	 * @param local the player that this client represents.
+	 */
 	public void setLocalPlayer(Player local) {
 		this.local = local;
 	}
-
-	
-	private static final double YUNO_PRUDENCE = 0.5D;
 	
 	public static void main(String[] args) {
-		args = new String[]{"AllesKaas", "-h"};
-		if (args.length != 2) {
-			System.out.println("Specify username and type of player");
-		} else {
+		args = new String[]{"Mark", "-h"};
+		Player localPlayer = null;
+		if (args.length == 2) {
 			String username = args[0];
-			Player localPlayer;
 			if (args[1].toLowerCase().equals("-h")) {
+				//Human player
 				localPlayer = new HumanPlayer(username, Chip.RED);
 			} else if (args[1].toLowerCase().equals("-n")) {
+				//Naive AI
 				localPlayer = new NaiveAI(username, Chip.RED);
-			} else if (args[1].toLowerCase().equals("-s")) {
-				localPlayer = new Yuno(username, Chip.RED, YUNO_PRUDENCE);
 			} else {
-				System.out.println("Usage: [username] [-h (=Human) | -n (=Naive AI) | -s (=Smart AI)]");
+				//Second argument not recognized
+				System.out.println(USAGE_MSG);
 				return;
 			}
-			Client c = new Client(localPlayer);
-			c.runtimeLoop();
+		} else if (args.length == 3) {
+			//Three arguments is only valid for the smart AI option
+			if (args[1].toLowerCase().equals("-s")) {
+				try {
+					//Third argument is the prudence factor. See javadoc of Yuno class for details
+					double prudence = Double.parseDouble(args[2]);
+					if (prudence >= 0 && prudence <= 1) {
+						localPlayer = new Yuno(args[0], Chip.RED, prudence);
+					} else {
+						//The prudence is not between 0 and 1
+						System.out.println(USAGE_MSG);
+						return;
+					}
+				} catch (NumberFormatException e) {
+					System.out.println(USAGE_MSG);
+					return;
+				}
+			} else {
+				//Wrong number of arguments for something other than the smart AI option
+				System.out.println(USAGE_MSG);
+				return;
+			}
+		} else {
+			//Not 2 or 3 arguments
+			System.out.println(NUM_ARGS_MSG);
+			System.out.println(USAGE_MSG);
+			return;
 		}
+		//The localplayer should have been initialized. If something was wrong with the arguments, the main method should have returned already
+		assert localPlayer != null;
+		Client c = new Client(localPlayer);
+		
+		//Start the main loop
+		c.runtimeLoop();
 	}
+	
+	/**
+	 * Displayed when a wrong number of arguments are given.
+	 */
+	private static final String NUM_ARGS_MSG = "Specify username and type of player";
+	
+	/**
+	 * Displayed when one or multiple illegal arguments has been passed
+	 */
+	private static final String USAGE_MSG = "Usage: [username] [-h (=Human) | -n (=Naive AI) | -s (=Smart AI) [prudence (>= 0 && <= 1]]";
 }

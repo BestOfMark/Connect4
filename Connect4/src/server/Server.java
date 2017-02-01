@@ -179,8 +179,10 @@ public class Server {
 	private static final int DIM_X = 4, DIM_Y = 4, DIM_Z = 4, WIN = 4;
 	public static final int THINK_TIME = 60000;
 	private static final int MAGIC_NUMBER = 0;
+	
 	/**
-	 * Called when the <code>InputHandler</code> of a <code>NetworkPlayer</code> receives a <b>HELLO</b> command.
+	 * Called when the <code>InputHandler</code> of a <code>NetworkPlayer</code> receives a <b>HELLO</b> command. The player is welcomed
+	 * with the WELCOME command.
 	 * @param player the <code>NetworkPlayer</code> from which this command originated.
 	 * @param username the desired username of the player.
 	 * @param isAI <code>true</code> indicates that the user that is registering is a computer player. <code>false</code> indicates a human player.
@@ -192,6 +194,12 @@ public class Server {
 		player.state = PlayerState.IDLE;
 	}
 	
+	/**
+	 * Called when the <code>InputHandler</code> of a <code>NetworkPlayer</code> receives a <b>REQUEST</b> command. The server will try
+	 * to find an opponent for that player. If no opponent is available the player will be available to be matched when another client
+	 * sends the request command.
+	 * @param player the player that made the request
+	 */
 	public void gameRequested(NetworkPlayer player) {
 		player.state = PlayerState.WAITING;
 		//Looking for an opponent
@@ -209,7 +217,7 @@ public class Server {
 
 	/**
 	 * Called when the <code>InputHandler</code> of a <code>NetworkPlayer</code> receives a <b>CHAT</b> command. Broadcasts 
-	 * the chat message to every connected client.
+	 * the chat message to every connected client, that is not banned or errorred.
 	 * @param msg the message to be sent
 	 */
 	public void chatReceived(NetworkPlayer player, String msg) {
