@@ -25,6 +25,7 @@ import client.Client;
 
 public class GUI extends View implements ActionListener {
 
+	//The GUI components
 	private JFrame frameGUI;
 	private JTextArea fieldArea;
 	private JTextArea internMessages;
@@ -33,6 +34,10 @@ public class GUI extends View implements ActionListener {
 	private JButton sendChat;
 	private JButton gameStart;
 	
+	/**
+	 * Create a GUI to interact with the client.
+	 * @param client reference to the <code>Client</code> object
+	 */
 	public GUI(Client client) {
 		super(client);
 		
@@ -167,7 +172,8 @@ public class GUI extends View implements ActionListener {
 	/**
 	 * Spawn a pop-up that requests a move from the user. The method blocks until input is 
 	 * received from the user or the method times out after the timeout time specified in 
-	 * the controller.
+	 * the controller. The JDialog is not modal, such that a user can still interact with 
+	 * the GUI, while this pop-up is up.
 	 * @return the move that the player entered, or null if the move timed out.
 	 */
 	synchronized public String getMove() {
@@ -190,11 +196,15 @@ public class GUI extends View implements ActionListener {
 			moveDialog.pack();
 			moveDialog.setLocationRelativeTo(frameGUI);
 			moveDialog.setVisible(true);
+			
+			//Now wait for the user to input his move, or for the time out
 			try {
 				moveInputted.await(control.timeout, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
 				System.err.println("Got interrupted");
 			}
+			
+			//Close the pop-up and return
 			moveDialog.dispose();
 			return moveInput;
 		} finally {
@@ -202,10 +212,19 @@ public class GUI extends View implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Show a pop-up that asks the user for the address of the server. The JDialog that 
+	 * pops up is modal, which means it blocks the main Swing thread until an input is returned.
+	 * @return a <code>String</code> which represents the user input, or <code>null</code> if 
+	 * the user pressed cancel or the exit button.
+	 */
 	public String getAddress() {
 		return (String) JOptionPane.showInputDialog(frameGUI, "Please enter the server address:");
 	}
 	
+	/**
+	 * Close the GUI.
+	 */
 	public void close() {
 		frameGUI.dispose();
 	}
