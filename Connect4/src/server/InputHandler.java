@@ -46,13 +46,13 @@ public class InputHandler extends Thread {
 	/**
 	 * If this threshold is reached the player will be banned for sending too many requests in a short amount of time.
 	 */
-	private static final int DOS_THRESHOLD = 20;
+	private static final int DOS_THRESHOLD = Integer.MAX_VALUE;
 	
 	/**
 	 * The Denial of Service counter is decremented every this amount of milliseconds. A client should not send requests faster than this rate
 	 * or it might get banned from the server.
 	 */
-	private static final int DOS_DECREMENT_INTERVAL = 10;
+	private static final int DOS_DECREMENT_INTERVAL = 1;
 	
 	/**
 	 * Construct a player's input handler, which listens to commands send from the client to the server.

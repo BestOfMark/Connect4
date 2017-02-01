@@ -346,7 +346,7 @@ public class Client {
 	}
 	
 	public static void main(String[] args) {
-		args = new String[]{"KaasLiefhebber", "-h"};
+		args = new String[]{"Mark", "-s", "0.5"};
 		Player localPlayer = null;
 		if (args.length == 2) {
 			String username = args[0];

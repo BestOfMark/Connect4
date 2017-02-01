@@ -71,13 +71,14 @@ public class Yuno extends ComputerPlayer {
 		}
 		
 		//Think one step ahead
-		boolean instantwin = false;
+		boolean instantwin;
 		ArrayList<Point> dumbMovesIllegals = new ArrayList<>();
 		dumbMovesIllegals.addAll(fullColumnIllegals);
 		Point move;
 		do {
 			//Determine the best move
 			move = bestMove(field, potentials, dangers, dumbMovesIllegals);
+			System.out.println("Thinking about move: " + move);
 			
 			//If there is no way to escape a dumb move. Make the best dumb move
 			if (move == null) return bestMove(field, potentials, dangers, fullColumnIllegals);
@@ -88,6 +89,7 @@ public class Yuno extends ComputerPlayer {
 			
 			//Check if an instant win can be obtained by the opponent
 			Point opponentMove = dumbAIOpponent.instaWin(moveSimulatedField);
+			instantwin = false;
 			if (opponentMove != null) {
 				//The opponent can now instantly win so add this move to the 'dumb' moves and reiterate.
 				instantwin = true;

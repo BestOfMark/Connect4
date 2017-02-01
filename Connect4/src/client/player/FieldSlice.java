@@ -105,7 +105,6 @@ public class FieldSlice {
 			}
 			if (field[startX][y] == c) streak++;
 		}
-		System.out.println(foundation + ", " + streak);
 		return potential(foundation, streak);
 	}
 	

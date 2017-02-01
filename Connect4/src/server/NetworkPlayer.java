@@ -6,8 +6,6 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.swing.plaf.basic.BasicScrollPaneUI.HSBChangeListener;
-
 import game.Chip;
 import server.protocol.ChatCapabilityServer;
 import server.protocol.Connect4Server;
@@ -50,7 +48,7 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 	/**
 	 * Stores the threshold for banning this player.
 	 */
-	private static final int TRANSGRESSION_THRESHOLD = 10;
+	private static final int TRANSGRESSION_THRESHOLD = 20;
 	
 	/**
 	 * Construct a new <code>NetworkPlayer</code>.
@@ -285,7 +283,7 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 	/**
 	 * Message sent to opponent (if in-game) and written to the console when this player gets banned because of too many requests. 
 	 */
-	public static final String MSG_BANNED_REQUESTS = "Banned because of too many requests to the server";
+	public static final String MSG_BANNED_REQUESTS = "Banned because of too many illegal requests to the server";
 	
 	/**
 	 * Message sent to opponent (if in-game) and written to the console when this player errors. 
