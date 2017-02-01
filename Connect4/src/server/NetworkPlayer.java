@@ -57,6 +57,8 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 	 * @param sock the socket on which this player connected to the server
 	 * @param server reference to the <code>Server</code> object that creates this player
 	 */
+	//@ requires sock != null;
+	//@ requires server != null;
 	public NetworkPlayer(int id, Socket sock, Server server) {
 		this.id = id;
 		this.sock = sock;

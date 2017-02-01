@@ -49,6 +49,10 @@ public class HostedGame {
 	 * @param dimZ the z-dimension of the field used in this game.
 	 * @param winLength the number of chips in a row needed to win this game.
 	 */
+	//@ requires server != null;
+	//@ requires player1 != null;
+	//@ requires player2 != null;
+	//@ requires dimX > 0 && dimY > 0 && dimZ > 0 && winLength >= 0;
 	public HostedGame(Server server, NetworkPlayer player1, NetworkPlayer player2, int dimX, 
 			int dimY, int dimZ, int winLength) {
 		//Initialize the participating players
@@ -82,6 +86,7 @@ public class HostedGame {
 	 * his move before the timeout occurs. If a move is made in-time, this task is cancelled.
 	 * @param player the player who has the turn
 	 */
+	//@ requires player != null;
 	private void scheduleTimeout(NetworkPlayer player) {
 		System.out.println("D: Scheduling timeout for " + player.toString());
 		

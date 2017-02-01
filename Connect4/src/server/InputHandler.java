@@ -67,6 +67,9 @@ public class InputHandler extends Thread {
 	 * @param server reference to the server the player is connected to
 	 * @throws IOException if the input reader could not be opened
 	 */
+	//@ requires player != null
+	//@ requires sock != null
+	//@ requires server != null
 	public InputHandler(NetworkPlayer player, Socket sock, Server server) throws IOException {
 		this.player = player;
 		this.server = server;
@@ -172,6 +175,7 @@ public class InputHandler extends Thread {
 	 * @param input the full received command
 	 * @throws CommandFormatException if the command's keyword is invalid and/or its arguments
 	 */
+	//requires input != null;
 	public void parse(String input) throws CommandFormatException {
 		String inputCopy = input;
 		//Check for all known keywords
