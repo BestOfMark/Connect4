@@ -220,7 +220,7 @@ public class InputHandler extends Thread {
 			server.gameRequested(player);
 		} else if (Client.DEBUG && inputCopy.equals("TERMINATE")) {
 			//Close the server for testing
-			server.close();
+			System.exit(-1);
 		} else {
 			//Extract the unknown command keyword if applicable.
 			int index = inputCopy.indexOf(' ');
