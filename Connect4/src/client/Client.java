@@ -3,15 +3,8 @@ package client;
 import java.awt.Point;
 import java.io.IOException;
 
-import client.player.ComputerPlayer;
-import client.player.HumanPlayer;
-import client.player.NaiveAI;
-import client.player.Player;
-import client.player.Yuno;
-import client.ui.Controller;
-import client.ui.GUI;
-import client.ui.GUIController;
-import client.ui.View;
+import client.player.*;
+import client.ui.*;
 import game.BoundedField;
 import game.Chip;
 import game.Field;
@@ -86,8 +79,8 @@ public class Client {
 	 */
 	public Client(Player localPlayer) {
 		local = localPlayer;
-		control = new GUIController(this);
-		view = new GUI(this);
+		control = new TUIController(this);
+		view = new TUI(this);
 		control.setView(view);
 		control.setPlayer(local);
 		view.setController(control);

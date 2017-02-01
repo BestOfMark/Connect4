@@ -62,7 +62,7 @@ public class HostedGame {
 		p2.enroll(this);
 		
 		//Decide randomly who has the first turn
-		playerWithTurn = (Math.random() < 0.5D) ? p1 : p2;
+		playerWithTurn = (Math.random() < 1.0D) ? p1 : p2;
 		
 		//Inform the clients that a game has started
 		p1.cmdGame(p2.username, p2.id, dimX, dimY, dimZ, playerWithTurn.id, winLength);

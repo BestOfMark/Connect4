@@ -31,18 +31,63 @@ public class GameWinSystemTest {
 			brMap.put(2, br2);
 			bwMap.put(2, bw2);
 			
-			//Hello from c1
-			sendCommand(1, "HELLO test1 false 0");
+			//Hello from c1, wait for WELCOME response server
+			sendCommand(1, "HELLO P1 false 0");
 			waitForResponse(1);
+			Thread.sleep(500);
 			
-			//Hello from c2
-			sendCommand(2, "HELLO test2 false 0");
+			//Hello from c2, wait for WELCOME response server
+			sendCommand(2, "HELLO P2 false 0");
 			waitForResponse(2);
+			Thread.sleep(500);
 			
+			//Request from c1, ready for a game
+			sendCommand(1, "REQUEST");
+			Thread.sleep(500);
+			
+			//Request from c2, ready for a game, game should start now that 2 players are ready
+			sendCommand(2, "REQUEST");
+			waitForResponse(1);
+			Thread.sleep(500);
+			
+			//Move from c1, Expects MOVE_SUCCESS from server
+			sendCommand(2, "MOVE 0 0");
+			waitForResponse(1);
+			waitForResponse(2);
+			Thread.sleep(500);
+			
+			//Chat c1, c2 receives chat
+			sendCommand(1, "CHAT " + "test message");
+			waitForResponse(2);
+			Thread.sleep(500);
+			
+			//Move from c1, ILLEGAL response expected from server
+			sendCommand(2, "MOVE " + "0 " + "0");
+			waitForResponse(1);
+			waitForResponse(2);
 			Thread.sleep(100);
 			
-			sock1.close();
+			//Move from c2, expects MOVE_SUCCESS from server
+			sendCommand(1, "MOVE 2 0");
+			waitForResponse(1);
+			waitForResponse(2);
+			Thread.sleep(500);
+			
+//			//Move from c2, expects MOVE_SUCCESS from server
+//			sendCommand(2, "MOVE 5 0");
+//			waitForResponse(1);
+//			waitForResponse(2);
+//			Thread.sleep(500);
+			
+			//c2 closes socket
 			sock2.close();
+			
+			Thread.sleep(20000);
+			
+			//Terminate the server for emma
+			sendCommand(1, "TERMINATE");
+			
+			sock1.close();
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
