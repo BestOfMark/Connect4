@@ -17,7 +17,7 @@ public class BoundedField extends Field {
 
 	@Override
 	public void addChip(Chip c, int x, int y) {
-		board[x][y][columnHeight(x,y)] = c;
+		board[x][y][columnHeight(x, y)] = c;
 		setChanged();
 		notifyObservers();
 	}
@@ -30,15 +30,19 @@ public class BoundedField extends Field {
 	@Override
 	public int columnHeight(int x, int y) {
 		for (int z = 0; z < dimZ; z++) {
-			if (board[x][y][z] == null) return z;
+			if (board[x][y][z] == null) {
+				return z;
+			}
 		}
 		return dimZ;
 	}
 
 	/**
-	 * Checks if a player has a sequence of at least the winning length somewhere in the field in some direction.
+	 * Checks if a player has a sequence of at least the winning length somewhere in 
+	 * the field in some direction.
 	 * @param c The chip associated to the player
-	 * @return <code>true</code> if such a sequence has been found in at least one of all the possible directions,
+	 * @return <code>true</code> if such a sequence has been found in at least one 
+	 * of all the possible directions,
 	 * <code>false</code> otherwise.
 	 */
 	//@ requires c != null;
@@ -47,25 +51,28 @@ public class BoundedField extends Field {
 		for (int x = 0; x < dimX; x++) {
 			for (int y = 0; y < dimY; y++) {
 				for (int z = 0; z < dimZ; z++) {
-					if (trace(c, x, y, z, 0, 0, 1)) return true;
-					if (trace(c, x, y, z, 0, 1, 0)) return true;
-					if (trace(c, x, y, z, 0, 1, 1)) return true;
-					if (trace(c, x, y, z, 1, 0, 0)) return true;
-					if (trace(c, x, y, z, 1, 0, 1)) return true;
-					if (trace(c, x, y, z, 1, 1, 0)) return true;
-					if (trace(c, x, y, z, 1, 1, 1)) return true;
+					if (
+							trace(c, x, y, z, 0, 0, 1) || 
+							trace(c, x, y, z, 0, 1, 0) || 
+							trace(c, x, y, z, 0, 1, 1) || 
+							trace(c, x, y, z, 1, 0, 0) ||
+							trace(c, x, y, z, 1, 0, 1) ||
+							trace(c, x, y, z, 1, 1, 0) ||
+							trace(c, x, y, z, 1, 1, 1) ||
 					
-					if (trace(c, x, y, z, 0, -1, 1)) return true;
-					if (trace(c, x, y, z, 1, -1, 1)) return true;
-					if (trace(c, x, y, z, 1, -1, 0)) return true;
+							trace(c, x, y, z, 0, -1, 1) ||
+							trace(c, x, y, z, 1, -1, 1) ||
+							trace(c, x, y, z, 1, -1, 0) ||
+							
+							trace(c, x, y, z, -1, 0, 1) ||
+							trace(c, x, y, z, -1, -1, 1) ||
+							trace(c, x, y, z, -1, -1, 0) ||
 					
-					if (trace(c, x, y, z, -1, 0, 1)) return true;
-					if (trace(c, x, y, z, -1, -1, 1)) return true;
-					if (trace(c, x, y, z, -1, -1, 0)) return true;
-					
-					if (trace(c, x, y, z, -1, 0, 1)) return true;
-					if (trace(c, x, y, z, -1, 1, 1)) return true;
-					if (trace(c, x, y, z, -1, 1, 0)) return true;
+							trace(c, x, y, z, -1, 0, 1) ||
+							trace(c, x, y, z, -1, 1, 1) ||
+							trace(c, x, y, z, -1, 1, 0)) {
+						return true;
+					}
 				}
 			}
 		}
@@ -73,8 +80,8 @@ public class BoundedField extends Field {
 	}
 	
 	/**
-	 * Checks for a winning sequence starting from a point <code>(startX, startY, startZ)</code> running towards
-	 * a given direction given by a trace vector <code>[dx, dy, dz]</code>.
+	 * Checks for a winning sequence starting from a point <code>(startX, startY, startZ)</code> 
+	 * running towards a given direction given by a trace vector <code>[dx, dy, dz]</code>.
 	 * @param c the <code>Chip</code> for which a winning sequence length is checked.
 	 * @param startX the x-coordinate of the starting point.
 	 * @param startY the y-coordinate of the starting point.
@@ -82,7 +89,8 @@ public class BoundedField extends Field {
 	 * @param dx the x-component of the trace vector.
 	 * @param dy the y-component of the trace vector.
 	 * @param dz the z-component of the trace vector.
-	 * @return <code>true</code> if a sequence of the winning length has been found, <code>false</code> otherwise.
+	 * @return <code>true</code> if a sequence of the winning length has been found, 
+	 * <code>false</code> otherwise.
 	 */
 	//@ requires c != null;
 	//@ requires dx != 0 || dy != 0 || dz != 0;
@@ -91,8 +99,12 @@ public class BoundedField extends Field {
 			int currX = startX + i * dx;
 			int currY = startY + i * dy;
 			int currZ = startZ + i * dz;
-			if (currZ < 0 || currZ >= dimZ || !inBounds(currX, currY)) return false;
-			if (board[currX][currY][currZ] != c) return false;
+			if (currZ < 0 || currZ >= dimZ || !inBounds(currX, currY)) {
+				return false;
+			}
+			if (board[currX][currY][currZ] != c) {
+				return false;
+			}
 		}
 		return true;
 	}
@@ -102,8 +114,8 @@ public class BoundedField extends Field {
 		BoundedField copy = new BoundedField(dimX, dimY, dimZ, winLength);
 		for (int i = 0; i < dimX; i++) {
 			for (int j = 0; j < dimY; j++) {
-				for (int k = 0; k < columnHeight(i,j); k++ ) {
-					copy.addChip(board[i][j][k] ,i, j);
+				for (int k = 0; k < columnHeight(i, j); k++) {
+					copy.addChip(board[i][j][k], i, j);
 				}
 			}
 		}
@@ -117,20 +129,27 @@ public class BoundedField extends Field {
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Textual overview of the board:\n");
 		sb.append("x -->\n");
-			for (int y = 0; y < dimY; y++) {
-				for (int z = 0; z < dimZ; z++) {
-					for (int x = 0; x < dimX; x++) {
-						if (board[x][y][z] != null) sb.append(board[x][y][z].getCharacter());
-						else sb.append(EMPTY_SPACE);
-						if (x < dimX - 1) sb.append(" ");
+		for (int y = 0; y < dimY; y++) {
+			for (int z = 0; z < dimZ; z++) {
+				for (int x = 0; x < dimX; x++) {
+					if (board[x][y][z] != null) {
+						sb.append(board[x][y][z].getCharacter());
+					} else {
+						sb.append(EMPTY_SPACE);
 					}
-				sb.append(ROOM_BETWEEN_SLICES);
+					if (x < dimX - 1) {
+						sb.append(" ");
+					}
 				}
-				if (y < dimY - 1) sb.append('\n');
+				sb.append(ROOM_BETWEEN_SLICES);
 			}
+			if (y < dimY - 1) {
+				sb.append('\n');
+			}
+		}
 		sb.append('\n');
 		for (int z = 0; z < dimZ; z++) {
-			for (int x = 0; x < dimX - 3; x++ ) {
+			for (int x = 0; x < dimX - 3; x++) {
 				sb.append(" ");
 			}
 			sb.append("z=" + z);
@@ -146,7 +165,9 @@ public class BoundedField extends Field {
 	public boolean checkFull() {
 		for (int x = 0; x < dimX; x++) {
 			for (int y = 0; y < dimY; y++) {
-				if (!columnFull(x, y)) return false;
+				if (!columnFull(x, y)) {
+					return false;
+				}
 			}
 		}
 		return true;

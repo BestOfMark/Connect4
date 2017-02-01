@@ -5,7 +5,7 @@ import java.util.Observable;
 public abstract class Field extends Observable {
 	
 	/**
-	 * Field dimension
+	 * Field dimension.
 	 */
 	//@ invariant dimX > 0 && dimY > 0 && dimZ > 0;
 	public final int dimX, dimY, dimZ;

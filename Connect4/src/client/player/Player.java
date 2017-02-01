@@ -22,7 +22,7 @@ public abstract class Player {
 	}
 	
 	/**
-	 * Sets the controller for this player
+	 * Sets the controller for this player.
 	 * @param c specifies the controller of the player
 	 */
 	//@ ensures \control == c;
@@ -31,7 +31,7 @@ public abstract class Player {
 	}
 
 	/**
-	 * returns the id of the player
+	 * returns the id of the player.
 	 * @return the integer value of the id of the player
 	 */
 	/* pure */public int getId() {
@@ -39,7 +39,7 @@ public abstract class Player {
 	}
 	
 	/**
-	 * Sets the id of the player
+	 * Sets the id of the player.
 	 * @param id the integer value of the id of the player
 	 */
 	//@ ensures \getID() == id;

@@ -22,7 +22,8 @@ public class FieldSlice {
 	}
 	
 	/**
-	 * Creates a <code>FieldSlice</code> with the field initialized to the given <code>Chip</code> array.
+	 * Creates a <code>FieldSlice</code> with the field initialized to the given 
+	 * <code>Chip</code> array.
 	 * @param slice the <code>Chip</code> array representing a 2D slice of the 3D field.
 	 * @param winSize the sequence length needed to win the game
 	 */
@@ -36,7 +37,8 @@ public class FieldSlice {
 	/**
 	 * Calculates the potential of this 2D field slice.
 	 * @param c the chip for which the potential is calculated
-	 * @param b <code>true</code> if a vertical-sequence (along the z-axis) should be considered in the calculations.
+	 * @param b <code>true</code> if a vertical-sequence (along the z-axis) 
+	 * should be considered in the calculations.
 	 * @return the potential of this field slice
 	 */
 	public double calculatePotential(Chip c, boolean b) {
@@ -46,7 +48,9 @@ public class FieldSlice {
 				//The naming of the potentials follows the same logic as explained in Yuno.java
 				
 				//Vertical potential
-				if (b) potential += potentialTraceVertical(c, x, y);
+				if (b) {
+					potential += potentialTraceVertical(c, x, y);
+				}
 				
 				//Horizontal potential
 				potential += potentialTrace(c, x, y, 1, 0);
@@ -62,8 +66,10 @@ public class FieldSlice {
 	}
 	
 	/**
-	 * Check if a sequence of the win length is feasible. The easier this is to achieve the larger the potential.
-	 * The more chips that have to be placed before this sequence can be completed the lower the potential.
+	 * Check if a sequence of the win length is feasible. 
+	 * The easier this is to achieve the larger the potential.
+	 * The more chips that have to be placed before this sequence can 
+	 * be completed the lower the potential.
 	 * @param c the chip for which a sequence potential is calculated
 	 * @param startX the x-coordinate of the first chip in the sequence
 	 * @param startY the y-coordinate of the first chip in the sequence
@@ -77,16 +83,23 @@ public class FieldSlice {
 		for (int i = 0; i < winSize; i++) {
 			int x = startX + i * dx;
 			int y = startY + i * dy;
-			if (!inField(x,y) || field[x][y] != c) return 0;
-			if (field[x][y] == c) streak++;
-			else foundation += howManyUnderneath(x, y);
+			if (!inField(x, y) || field[x][y] != c) {
+				return 0;
+			}
+			if (field[x][y] == c) {
+				streak++;
+			} else {
+				foundation += howManyUnderneath(x, y);
+			}
 		}
 		return potential(foundation, streak);
 	}
 	
 	/**
-	 * Check if a vertical sequence of the win length is feasible. The easier this is to achieve the larger the potential.
-	 * The more chips that have to be placed before this sequence can be completed the lower the potential.
+	 * Check if a vertical sequence of the win length is feasible. 
+	 * The easier this is to achieve the larger the potential.
+	 * The more chips that have to be placed before this sequence can 
+	 * be completed the lower the potential.
 	 * @param c the chip for which a sequence potential is calculated
 	 * @param startX the x-coordinate of the first chip in the sequence
 	 * @param startY the y-coordinate of the first chip in the sequence
@@ -103,13 +116,16 @@ public class FieldSlice {
 			if (!inField(startX, y) || field[startX][y] == c.other()) {
 				return 0;
 			}
-			if (field[startX][y] == c) streak++;
+			if (field[startX][y] == c) {
+				streak++;
+			}
 		}
 		return potential(foundation, streak);
 	}
 	
 	/**
-	 * Calculate how many empty spaces (so not occupied by chips of the local player or the opponent) are underneath a 
+	 * Calculate how many empty spaces 
+	 * (so not occupied by chips of the local player or the opponent) are underneath a 
 	 * certain position in the field slice.
 	 * @param xPos the x-coordinate of the position
 	 * @param yPos the y-coordinate of the position
@@ -119,15 +135,17 @@ public class FieldSlice {
 		int i = 0;
 		int y = yPos;
 		while (true) {
-			if (y < 0 || field[xPos][y] != null) break;
+			if (y < 0 || field[xPos][y] != null) {
+				break;
+			}
 			y--;
 			i++;
 		}
-		return i-1;
+		return i - 1;
 	}
 	
 	/**
-	 * Check if a position is inside the field slice
+	 * Check if a position is inside the field slice.
 	 * @param x the x-coordinate of the position
 	 * @param y the y-coordinate of the position
 	 * @return <code>true</code> if the position is inside the field, <code>false</code> otherwise.
@@ -138,13 +156,16 @@ public class FieldSlice {
 	
 	/**
 	 * Calculate the potential of a possible winning sequence.
-	 * @param foundation the amount of chips needed such that the chips can be actually placed on top of existing chips in the field.
-	 * @param streak the amount of chips (belonging to the player for which the potential is calculated) already present in the possible 
+	 * @param foundation the amount of chips needed such that the chips can be actually 
+	 * placed on top of existing chips in the field.
+	 * @param streak the amount of chips (belonging to the player for which the potential 
+	 * is calculated) already present in the possible 
 	 * winning sequence
 	 * @return a floating point number representing the sequence's potential
 	 */
 	private double potential(double foundation, double streak) {
-		return (foundation > 0) ? 1.0D / Math.pow(foundation, 1.0D) * Math.pow(2.0D, 2.0D * streak) : Math.pow(2.0D, 2.0 * streak + 1);
+		return (foundation > 0) ? 1.0D / Math.pow(foundation, 1.0D) * 
+				Math.pow(2.0D, 2.0D * streak) : Math.pow(2.0D, 2.0 * streak + 1);
 	}
 	
 	private static final char WHITESPACE = ' ';

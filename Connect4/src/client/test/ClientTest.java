@@ -10,7 +10,10 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 
-
+/**
+ * This Class opens a dummy server controlled via the command window.
+ * A client can connect to the dummy server, allowing for flexible debugging by the user.
+ */
 
 public class ClientTest {
 	
@@ -34,51 +37,51 @@ public class ClientTest {
 	
 	private static class InputListener extends Thread {
 	
-	@Override
-	public void run() {
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		String line;
-		try {
-			while ((line = br.readLine()) != null) {
-				System.out.println(line);
+		@Override
+		public void run() {
+			BufferedReader br = null;
+			try {
+				br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			String line;
+			try {
+				while ((line = br.readLine()) != null) {
+					System.out.println(line);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Exiting client listener");
 		}
-		System.out.println("Exiting client listener");
 	}
-}
 
-private static class ConsoleListener extends Thread {
+	private static class ConsoleListener extends Thread {
 	
-	@Override
-	public void run() {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = null;
-		try {
-			bw = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		String line;
-		try {
-			while ((line = br.readLine()) != null) {
-				System.out.println("ECHO: " + line);
-				bw.write(line);
-				bw.newLine();
-				bw.flush();
+		@Override
+		public void run() {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			BufferedWriter bw = null;
+			try {
+				bw = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			String line;
+			try {
+				while ((line = br.readLine()) != null) {
+					System.out.println("ECHO: " + line);
+					bw.write(line);
+					bw.newLine();
+					bw.flush();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Exiting console listener");
 		}
-		System.out.println("Exiting console listener");
 	}
-}
 
 }

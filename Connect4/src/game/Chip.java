@@ -6,7 +6,7 @@ public enum Chip {
 	private final char colour;
 	
 	/**
-	 * Initialize a <code>Chip</code> with a string representation of the colour
+	 * Initialize a <code>Chip</code> with a string representation of the colour.
 	 * @param s
 	 */
 	private Chip(char c) {

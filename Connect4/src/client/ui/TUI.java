@@ -10,7 +10,7 @@ public class TUI extends View {
 	private final ReentrantLock consoleWriteLock = new ReentrantLock();
 	
 	/**
-	 * calls the Constructor of View
+	 * calls the Constructor of View.
 	 * @param client specifies the client used to call this constructor.
 	 */
 	//@ requires client != null;

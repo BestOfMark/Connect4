@@ -15,7 +15,8 @@ public abstract class Controller {
 	protected int timeout;
 	
 	/**
-	 * convenience constructor for subclasses of type Controller. Sets the client and the player of this controller.
+	 * convenience constructor for subclasses of type Controller. 
+	 * Sets the client and the player of this controller.
 	 * @param client specifies the client linked to this controller.
 	 * @param player specifies the player linked to this controller.
 	 */
@@ -34,7 +35,8 @@ public abstract class Controller {
 	
 	/**
 	 * requests the address and the port of the server to which the player wants to connect.
-	 * @return the address and port entered by the player or <code>null</code> if interrupted while waiting for input of the player.
+	 * @return the address and port entered by the player or <code>null</code> 
+	 * if interrupted while waiting for input of the player.
 	 */
 	public abstract String requestAddress();
 	
@@ -48,7 +50,8 @@ public abstract class Controller {
 	}
 	
 	/**
-	 * Sets the amount of time the player has to think about a move to the specified amount of time given by the server. 
+	 * Sets the amount of time the player has to think about a move to the 
+	 * specified amount of time given by the server. 
 	 * @param millis The amount of time the player has to think over a move.
 	 */
 	//@ requires millis > 0;

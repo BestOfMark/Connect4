@@ -9,14 +9,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import client.Client;
-import client.Protocoller;
 import client.player.ComputerPlayer;
-import client.player.Player;
 import game.Field;
 
 public class TUIController extends Controller {
 	
-	private TUI tui;
 	private InputHandler ih;
 	
 	private static ReentrantLock inputWaiterLock = new ReentrantLock();
@@ -39,11 +36,11 @@ public class TUIController extends Controller {
 		spawnInputHandler();
 	}
 	/**
-	 * Creates and starts a new inputHandler
+	 * Creates and starts a new inputHandler.
 	 */
 	private void spawnInputHandler() {
-			ih = new InputHandler();
-			ih.start();
+		ih = new InputHandler();
+		ih.start();
 	}
 
 	@Override
@@ -88,7 +85,7 @@ public class TUIController extends Controller {
 	}
 	
 	/**
-	 * sets the next move to the point(x,y) of move
+	 * sets the next move to the point(x,y) of move.
 	 * @param move a point(x,y)
 	 */
 	//@ requires move != null;
@@ -127,7 +124,11 @@ public class TUIController extends Controller {
 			try {
 				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				String input;
-				while (!isCloseRequested && (input = br.readLine()) != null) {
+				while (!isCloseRequested) {
+					input = br.readLine();
+					if (input == null) {
+						break;
+					}
 //					view.userInput(input);
 					parse(input);
 				}
@@ -142,34 +143,40 @@ public class TUIController extends Controller {
 	}
 	
 	/**
-	 * This method is called when input has been received by the TUI from the player. If the input starts with \ it will scan input for
-	 * the commands address, move, exit, chat, invite and scoreboard. After specifying the command it will take the remainder of the string
-	 * to execute the command. If the command address is used it will retrieve the IP-address and port of the server. 
-	 * If the command move is used it will retrieve the point entered and call the move method or it will return an error if the
+	 * This method is called when input has been received by the TUI from the player. 
+	 * If the input starts with \ it will scan input for the commands address, move, 
+	 * exit, chat, invite and scoreboard. After specifying the command it will take 
+	 * the remainder of the string to execute the command. If the command address 
+	 * is used it will retrieve the IP-address and port of the server. 
+	 * If the command move is used it will retrieve the point entered and call 
+	 * the move method or it will return an error if the
 	 * command was used in an invalid way.
 	 * if the command exit is used it will tell all processes that are going on to terminate.
-	 * if the command chat is used it will send the input string to one specific user or to all users
+	 * if the command chat is used it will send the input string to one specific user 
+	 * or to all users
 	 * if the command invite is used it will invite the specified user in the lobby.
 	 * if the command scoreboard is used it will retrieve the scoreboard of the server. 
-	 * @param input A String that was received and contains a command.
+	 * @param inputCopy A String that was received and contains a command.
 	 */
 	private void parse(String input) {
-		if (input.startsWith("\\")) {
-			input = input.substring(1).toLowerCase();
+		String inputCopy = input;
+		if (inputCopy.startsWith("\\")) {
+			inputCopy = inputCopy.substring(1).toLowerCase();
 			inputWaiterLock.lock();
 			try {
-				if (input.startsWith(CMD_ADDRESS)) {
-					this.address = input.substring(CMD_ADDRESS.length()).trim();
+				if (inputCopy.startsWith(CMD_ADDRESS)) {
+					this.address = inputCopy.substring(CMD_ADDRESS.length()).trim();
 					setAddress(address);
-				} else if (input.startsWith(CMD_REQUEST)) {
+				} else if (inputCopy.startsWith(CMD_REQUEST)) {
 					try {
 						client.getProtocoller().cmdGameRequest();
 					} catch (IOException e) {
 						client.getView().internalMessage("Unable to request game");
 					}
-				} else if (input.startsWith(CMD_MOVE)) {
+				} else if (inputCopy.startsWith(CMD_MOVE)) {
 				
-					String[] args = input.substring(CMD_MOVE.length()).replaceAll("\\D", " ").trim().split("\\s+");
+					String[] args = inputCopy.substring(CMD_MOVE.length()).replaceAll("\\D", " ")
+							.trim().split("\\s+");
 					if (args.length != 2) {
 						view.internalMessage("Wrong argument(s)");
 						view.internalMessage("Usage: \\move x(int) y(int)");
@@ -178,18 +185,18 @@ public class TUIController extends Controller {
 						int y = Integer.parseInt(args[1]);
 						setMove(new Point(x, y));
 					}
-				} else if (input.startsWith(CMD_CHAT)) {
-					input = input.substring(CMD_CHAT.length()).trim();
+				} else if (inputCopy.startsWith(CMD_CHAT)) {
+					inputCopy = inputCopy.substring(CMD_CHAT.length()).trim();
 					try {
-						client.getProtocoller().cmdChat(input);
+						client.getProtocoller().cmdChat(inputCopy);
 					} catch (IOException e) {
 						System.err.println("Error while sending CHAT");
 					}
-				} else if (input.startsWith(CMD_INVITE)) {
+				} else if (inputCopy.startsWith(CMD_INVITE)) {
 					view.internalMessage("Yet to implement");
-				} else if (input.startsWith(CMD_GETSCOREBOARD)) {
+				} else if (inputCopy.startsWith(CMD_GETSCOREBOARD)) {
 					view.internalMessage("Yet to implement");
-				} else if (input.equals(CMD_EXIT)) {
+				} else if (inputCopy.equals(CMD_EXIT)) {
 					System.out.println("Trying to close");
 					close();
 				} else {

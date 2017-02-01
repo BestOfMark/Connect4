@@ -4,7 +4,6 @@ import java.awt.Point;
 
 import client.Client;
 import client.player.ComputerPlayer;
-import client.player.Player;
 import game.Field;
 
 public class GUIController extends Controller {
@@ -38,7 +37,9 @@ public class GUIController extends Controller {
 			return move;
 		} else {
 			String input = gui.getMove();
-			if (input == null) return null;
+			if (input == null) {
+				return null;
+			}
 			if (!input.matches("\\d+\\D+\\d+")) {
 				view.internalMessage(WRONG_SYNTAX);
 			} else {

@@ -10,27 +10,33 @@ import game.Field;
 public class Yuno extends ComputerPlayer {
 
 	/**
-	 * The naive AI is used to check if either the opponent or this AI himself can win in just one move.
+	 * The naive AI is used to check if either the opponent or 
+	 * this AI himself can win in just one move.
 	 */
 	//@ invariant dumbAISelf != null;
 	//@ invariant dumbAIOpponent != null;
 	private NaiveAI dumbAISelf, dumbAIOpponent;
 	
 	/**
-	 * Sets the priority of this AI. A value of 0.0 means the AI will only go for his own win, without blocking the opponent.
-	 * Not including situations where the opponent can win in the next move. A value of 1.0 means the AI is full defensive and
+	 * Sets the priority of this AI. A value of 0.0 means the AI will only go for his own win, 
+	 * without blocking the opponent.
+	 * Not including situations where the opponent can win in the next move. 
+	 * A value of 1.0 means the AI is full defensive and
 	 * will only try to block the opponent. Except for instant-win opportunities.
 	 */
 	//@ invariant prudence >= 0 && prudence <= 1;
 	private double prudence;
 	
 	/**
-	 * Create the <q>Yuno</q> computer player, which is smarter than the <code>Naive AI</code>. Yuno looks for the move that will
+	 * Create the <q>Yuno</q> computer player, which is smarter than the <code>Naive AI</code>. 
+	 * Yuno looks for the move that will
 	 * result in the most potential. Potential is defined in the <code>FieldSlice</code> class.
 	 * @param username the username of this (computer) player, that will be sent to the server
 	 * @param chip the chip of this (computer) player
-	 * @param prudence  sets the priority of this AI. A value of 0.0 means the AI will only go for his own win, without blocking the opponent.
-	 * Not including situations where the opponent can win in the next move. A value of 1.0 means the AI is full defensive and
+	 * @param prudence  sets the priority of this AI. 
+	 * A value of 0.0 means the AI will only go for his own win, without blocking the opponent.
+	 * Not including situations where the opponent can win in the next move. 
+	 * A value of 1.0 means the AI is full defensive and
 	 * will only try to block the opponent. Except for instant-win opportunities.
 	 */
 	//@ requires chip != null;
@@ -66,7 +72,9 @@ public class Yuno extends ComputerPlayer {
 		ArrayList<Point> fullColumnIllegals = new ArrayList<>();
 		for (int x = 0; x < field.dimX; x++) {
 			for (int y = 0; y < field.dimY; y++) {
-				if (field.columnFull(x, y)) fullColumnIllegals.add(new Point(x,y));
+				if (field.columnFull(x, y)) {
+					fullColumnIllegals.add(new Point(x, y));
+				}
 			}
 		}
 		
@@ -81,7 +89,9 @@ public class Yuno extends ComputerPlayer {
 			System.out.println("Thinking about move: " + move);
 			
 			//If there is no way to escape a dumb move. Make the best dumb move
-			if (move == null) return bestMove(field, potentials, dangers, fullColumnIllegals);
+			if (move == null) {
+				return bestMove(field, potentials, dangers, fullColumnIllegals);
+			}
 			
 			//Simulate the best move
 			Field moveSimulatedField = field.deepCopy();
@@ -91,7 +101,8 @@ public class Yuno extends ComputerPlayer {
 			Point opponentMove = dumbAIOpponent.instaWin(moveSimulatedField);
 			instantwin = false;
 			if (opponentMove != null) {
-				//The opponent can now instantly win so add this move to the 'dumb' moves and reiterate.
+				//The opponent can now instantly win so add this move to the 
+				//'dumb' moves and reiterate.
 				instantwin = true;
 				dumbMovesIllegals.add(move);
 			}
@@ -100,16 +111,21 @@ public class Yuno extends ComputerPlayer {
 	}
 	
 	/**
-	 * Calculate the best moves in terms of the net potential. Which is the difference between the potential and danger (potential
-	 * of the opponent). The prudence factor sets the weight of the potential and the danger in the calculation of the netto potential.
+	 * Calculate the best moves in terms of the net potential. 
+	 * Which is the difference between the potential and danger (potential
+	 * of the opponent). 
+	 * The prudence factor sets the weight of the potential and 
+	 * the danger in the calculation of the netto potential.
 	 * @param field a copy of the current playing field
 	 * @param potentials the potential for the computer player self
 	 * @param dangers the potential of the opponent
-	 * @param illegals the moves that should be discarded, because they are either illegal (the column is full) or they result in an
+	 * @param illegals the moves that should be discarded, 
+	 * because they are either illegal (the column is full) or they result in an
 	 * instant win for the opponent.
 	 * @return a java.awt.Point representing the best move in terms of net potential.
 	 */
-	private Point bestMove(Field field, double[][] potentials, double[][] dangers, ArrayList<Point> illegals) {
+	private Point bestMove(Field field, double[][] potentials, 
+			double[][] dangers, ArrayList<Point> illegals) {
 		//These two values store the highest encountered net potential and the corresponding move
 		Point bestMove = null;
 		double maxProfit = Integer.MIN_VALUE;
@@ -120,7 +136,9 @@ public class Yuno extends ComputerPlayer {
 				Point move = new Point(x, y);
 				
 				//Discard move if it is an illegal move
-				if (illegals.contains(move)) continue;
+				if (illegals.contains(move)) {
+					continue;
+				}
 				
 				//Calculate the net potential using the prudence factor
 				double netPot = (1.0D - prudence) * potentials[x][y] - prudence * dangers[x][y];
@@ -182,8 +200,10 @@ public class Yuno extends ComputerPlayer {
 		
 		//Vertical slices
 		for (int x = 0; x < field.dimX; x++) {
-			//Add the potential of the so-called vertical slice. The vertical slice is parallel to the y-axis.
-			//Only in this slice the vertical sequence potential is calculated (a sequence along the z-axis) to avoid multiple counts
+			//Add the potential of the so-called vertical slice. 
+			//The vertical slice is parallel to the y-axis.
+			//Only in this slice the vertical sequence potential is calculated 
+			//(a sequence along the z-axis) to avoid multiple counts
 			potential += sliceField(field, x, 0, 0, 1).calculatePotential(c, true);
 		}
 		
@@ -227,7 +247,9 @@ public class Yuno extends ComputerPlayer {
 		while (true) {
 			int colX = startX + i * dx;
 			int colY = startY + i * dy;
-			if (!field.inBounds(colX, colY)) break;
+			if (!field.inBounds(colX, colY)) {
+				break;
+			}
 			columns.add(field.getColumn(colX, colY));
 			i++;
 		}
