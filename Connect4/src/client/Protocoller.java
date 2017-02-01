@@ -71,7 +71,6 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 				username, String.valueOf(isAi), String.valueOf(clientCapabilities)));
 		bw.newLine();
 		bw.flush();
-//		cmdGameRequest();
 	}
 	
 	public void cmdGameRequest() throws IOException {
@@ -164,6 +163,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 	 * @param input <code>String</code> received from the server
 	 * @throws CommandFormatException
 	 */
+	//@ requires input != null;
 	public void parse(String input) throws CommandFormatException {
 		String inputCopy = input;
 		if (inputCopy.startsWith(SERVER_WELCOME)) {

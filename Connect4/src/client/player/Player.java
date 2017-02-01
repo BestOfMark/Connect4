@@ -5,7 +5,9 @@ import game.Chip;
 
 public abstract class Player {
 
+	//@ invariant username != null;
 	public final String username;
+	//@ invariant chip != null;
 	public final Chip chip;
 	private int id;
 	protected Controller control;
@@ -34,7 +36,7 @@ public abstract class Player {
 	 * returns the id of the player.
 	 * @return the integer value of the id of the player
 	 */
-	/* pure */public int getId() {
+	/*@ pure */public int getId() {
 		return id;
 	}
 	

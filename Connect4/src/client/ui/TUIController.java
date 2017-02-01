@@ -158,6 +158,7 @@ public class TUIController extends Controller {
 	 * if the command scoreboard is used it will retrieve the scoreboard of the server. 
 	 * @param inputCopy A String that was received and contains a command.
 	 */
+	//@ requires input != null;
 	private void parse(String input) {
 		String inputCopy = input;
 		if (inputCopy.startsWith("\\")) {

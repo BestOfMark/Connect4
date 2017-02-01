@@ -14,11 +14,13 @@ public class Client {
 	/**
 	 * Stores the <code>Controller</code> object used by the <code>Client</code>.
 	 */
+	//@ invariant control != null;
 	private Controller control;
 	
 	/**.
 	 * Stores the <code>View</code> object used by the <code>Client</code> 
 	 */
+	//@ invariant view != null;
 	private View view;
 	
 	/**
@@ -29,6 +31,7 @@ public class Client {
 	/**
 	 * Stores the <code>Player</code> of the local player.
 	 */
+	//@ invariant local != null;
 	private Player local;
 	
 	/**
@@ -72,6 +75,10 @@ public class Client {
 	 */
 	private GameState state = GameState.UNCONNECTED;
 	
+	/**
+	 * The dumbAI is used to make a move when the player does not make his move in time.
+	 */
+	//@ invariant dumbAI != null;
 	private ComputerPlayer dumbAI;
 	
 	/**
@@ -173,7 +180,7 @@ public class Client {
 	 * @param millis the allowed time to respond to the server before
 	 * @param magicNumber an integer containing all the features of the game. 
 	 */
-	//@ requires milles > 0;
+	//@ requires millis > 0;
 	protected void welcomed(int userID, int millis, int magicNumber) {
 		control.setTimeout((int) (TIMEOUT_FACTOR * millis));
 		local.setId(userID);
@@ -332,7 +339,7 @@ public class Client {
 	 * Returns the view object of the client.
 	 * @return view object of the client
 	 */
-	/* Pure */public View getView() {
+	/*@ pure */public View getView() {
 		return view;
 	}
 
@@ -372,6 +379,8 @@ public class Client {
 	 * Set a reference to the client's <code>Player</code> object.
 	 * @param localPlayer the player that this client represents.
 	 */
+	//@ requires localPlayer != null;
+	//@ ensures local = localPlayer;
 	public void setLocalPlayer(Player localPlayer) {
 		this.local = localPlayer;
 	}

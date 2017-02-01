@@ -13,6 +13,7 @@ public class NaiveAI extends ComputerPlayer {
 	 * Calls the constructor of Player with the username LookingForBetterName.
 	 * @param chip specifies the chip used by the ComputerPlayer
 	 */
+	//@ requires chip != null;
 	public NaiveAI(String username, Chip chip) {
 		super(username, chip);
 	}
@@ -35,7 +36,7 @@ public class NaiveAI extends ComputerPlayer {
 		return new Point(x, y);
 	}
 
-	public Point instaWin(Field field) {
+	/*@ pure */public Point instaWin(Field field) {
 		for (int x = 0; x < field.dimX; x++) {
 			for (int y = 0; y < field.dimY; y++) {
 				if (!field.inBounds(x, y) || field.columnFull(x, y)) {
