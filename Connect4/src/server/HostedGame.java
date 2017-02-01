@@ -4,6 +4,7 @@ import static client.Protocoller.*;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import game.BoundedField;
@@ -80,6 +81,8 @@ public class HostedGame {
 	 * @param player the player who has the turn
 	 */
 	private void scheduleTimeout(NetworkPlayer player) {
+		System.out.println("D: Scheduling timeout for " + player.toString());
+		
 		//Create a new timer
 		timeoutTimer = new Timer();
 		
@@ -106,7 +109,8 @@ public class HostedGame {
 	/**
 	 * The lock that should be acquired before a received move is handled.
 	 */
-	private final ReentrantLock lock = new ReentrantLock();
+	public static final ReentrantLock LOCK = new ReentrantLock();
+	public static final Condition MOVES_SENT = LOCK.newCondition();
 	
 	/**
 	 * Process a move received from one of the clients in this <code>HostedGame</code>. If the move is valid - i.e. the player who made 
@@ -120,15 +124,29 @@ public class HostedGame {
 	synchronized public void moveReceived(NetworkPlayer player, int x, int y) {
 		//In the case of two simultaneous commands, make sure it is executed sequentially.
 		if (gameOver) return;
-		lock.lock();
+		System.out.println("D: Now trying to acquire lock");
+		LOCK.lock();
 		try {
 			//Check if the move is legal
 			if (player.equals(playerWithTurn) && field.inBounds(x, y) && !field.columnFull(x, y)) {
+				System.out.println("D: Legal move");
+				
 				//Legal move
 				field.addChip(player.chip, x, y);
 				playerWithTurn = getOpponent(player);
+				sendCounter = 0;
 				p1.cmdMoveSuccess(x, y, player.id, playerWithTurn.id);
 				p2.cmdMoveSuccess(x, y, player.id, playerWithTurn.id);
+				
+				System.out.println("D: Waiting for signals");
+				//Wait for the moves to be sent
+				try {
+					MOVES_SENT.await();
+				} catch (InterruptedException e) {
+					System.err.println("Awaiting moves sent got interrupted");
+				}
+				
+				System.out.println("D: Signals got");
 				
 				//Cancel the timeout and set the new timeout
 				timeoutTimer.cancel();
@@ -150,7 +168,21 @@ public class HostedGame {
 				player.newTransgression();
 			}
 		} finally {
-			lock.unlock();
+			LOCK.unlock();
+		}
+	}
+	
+	private int sendCounter;
+	
+	public void incrementSendCounter() {
+		if (++sendCounter == 2) {
+			System.out.println("D: Will now unlock");
+			LOCK.lock();
+			try {
+				MOVES_SENT.signal();
+			} finally {
+				LOCK.unlock();
+			}
 		}
 	}
 
@@ -171,6 +203,7 @@ public class HostedGame {
 	 */
 	//@ requires player != null;
 	public void playerLeft(NetworkPlayer player, String reason) {
+		System.out.println("D: Endgame because player left: " + player.toString());
 		NetworkPlayer other = getOpponent(player);
 		other.cmdPlayerLeft(player.id, reason);
 		other.cmdGameEnd(other.id);
@@ -181,7 +214,9 @@ public class HostedGame {
 	 * Called when the current player timed out. The player that timed out is the loser and both clients are notified of the game end.
 	 * @param player the player that timed out
 	 */
+	//@ requires player != null;
 	public void timeOut(NetworkPlayer player) {
+		System.out.println("D: Endgame bacause player timed out: " + player.toString());
 		NetworkPlayer other = getOpponent(player);
 		player.cmdGameEnd(other.id);
 		other.cmdGameEnd(other.id);

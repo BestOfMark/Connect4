@@ -25,7 +25,7 @@ import client.Client;
 
 public class GUI extends View implements ActionListener {
 
-	private JFrame frameGUI;
+	public static JFrame frameGUI;
 	private JTextArea fieldArea;
 	private JTextArea internMessages;
 	private JTextArea chatMessages;

@@ -6,6 +6,8 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.swing.plaf.basic.BasicScrollPaneUI.HSBChangeListener;
+
 import game.Chip;
 import server.protocol.ChatCapabilityServer;
 import server.protocol.Connect4Server;
@@ -130,7 +132,7 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 		sendToClient(String.join(COMMAND_DELIMITER, SERVER_WELCOME, 
 				String.valueOf(assignedUserID), 
 				String.valueOf(allowedThinkTime), 
-				String.valueOf(capabilities)));
+				String.valueOf(capabilities)), false);
 	}
 
 	@Override
@@ -143,7 +145,7 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 				String.valueOf(playFieldY),
 				String.valueOf(playFieldZ),
 				String.valueOf(playerWhoHasNextTurnID),
-				String.valueOf(sequenceLengthOfWin)));
+				String.valueOf(sequenceLengthOfWin)), false);
 	}
 
 	@Override
@@ -152,46 +154,48 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 				String.valueOf(moveX), 
 				String.valueOf(moveY), 
 				String.valueOf(actorID), 
-				String.valueOf(playerWhoHasNextTurnID)));
+				String.valueOf(playerWhoHasNextTurnID)), true);
 	}
 
 	@Override
 	public void cmdGameEnd(int winnerID) {
 		sendToClient(String.join(COMMAND_DELIMITER, SERVER_GAME_END, 
-				String.valueOf(winnerID)));
+				String.valueOf(winnerID)), false);
 	}
 
 	@Override
 	public void cmdReportIllegal(String theIllegalCommandWithParameters) {
 		sendToClient(String.join(COMMAND_DELIMITER, SERVER_ILLEGAL, 
-				theIllegalCommandWithParameters));
+				theIllegalCommandWithParameters), false);
 	}
 
 	@Override
 	public void cmdPlayerLeft(int leftPlayerID, String reason) {
 		sendToClient(String.join(COMMAND_DELIMITER, SERVER_LEFT, 
 				String.valueOf(leftPlayerID), 
-				reason));
+				reason), false);
 	}
 
 	@Override
 	public void cmdBroadcastMessage(int senderId, String msg) {
 		sendToClient(String.join(COMMAND_DELIMITER, SERVER_CHAT_MSG, 
 				String.valueOf(senderId), 
-				msg));
+				msg), false);
 	}
 	
 	/**
-	 * Launch a thread that will try to send a command to the client of this player. The command is not sent if the player is banned or an error has occurred
-	 * earlier.
+	 * Launch a thread that will try to send a command to the client of this player. The command is not sent if the 
+	 * player is banned or an error has occurred earlier.
 	 * @param cmd the command to be sent.
+	 * @param wakeUp indicate if the <code>HostedGame</code> from where the command was dispatched is waiting and should
+	 * be woken up
 	 */
-	private void sendToClient(String cmd) {
+	private void sendToClient(String cmd, boolean wakeUp) {
 		if (state == PlayerState.BANNED || state == PlayerState.ERRORED) return;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				sendToClient(cmd, 0);
+				sendToClient(cmd, 0, wakeUp);
 				
 			}
 		}).start();;
@@ -218,8 +222,10 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 	 * to try and send the command again. After a certain amount of tries it gives up and the player's state is set to ERRORED.
 	 * @param cmd the command to send.
 	 * @param tryCount the amount of tries already made to send the command
+	 * @param wakeUp indicate if the <code>HostedGame</code> from where the command was dispatched is waiting and should
+	 * be woken up
 	 */
-	synchronized private void sendToClient(String cmd, int tryCount) {
+	synchronized private void sendToClient(String cmd, int tryCount, boolean wakeUp) {
 		try {
 			sendLock.lock();
 			try {
@@ -228,6 +234,16 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 				bw.newLine();
 				bw.flush();
 				System.out.println("Command sent: " + cmd);
+				if (wakeUp && game != null) {
+					HostedGame.LOCK.lock();
+					try {
+						game.incrementSendCounter();
+						System.out.println("D: Incremented");
+					} finally {
+						HostedGame.LOCK.unlock();
+					}
+					
+				}
 			} finally {
 				sendLock.unlock();
 			}
@@ -240,7 +256,7 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 				System.err.println("Retrying to send command...");
 				try {
 					Thread.sleep(SEND_INTERVAL);
-					sendToClient(cmd, tryCount++);
+					sendToClient(cmd, tryCount++, wakeUp);
 				} catch (InterruptedException e1) {}
 			} else {
 				//Give up on sending the command and set the state to errored

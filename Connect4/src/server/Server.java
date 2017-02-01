@@ -177,7 +177,7 @@ public class Server {
 	}
 
 	private static final int DIM_X = 4, DIM_Y = 4, DIM_Z = 4, WIN = 4;
-	public static final int THINK_TIME = 60000;
+	public static final int THINK_TIME = 20000;
 	private static final int MAGIC_NUMBER = 0;
 	
 	/**

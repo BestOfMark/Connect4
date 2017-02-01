@@ -96,6 +96,7 @@ public class Client {
 	 */
 	private void runtimeLoop() {
 		while (!exitRequested) {
+			if (GUI.frameGUI != null) GUI.frameGUI.setTitle(state.toString());
 			switch (state) {
 			case UNCONNECTED:
 				String address = control.requestAddress();
