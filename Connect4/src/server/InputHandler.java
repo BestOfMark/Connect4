@@ -183,6 +183,10 @@ public class InputHandler extends Thread {
 			}
 			input = input.substring(CLIENT_MOVE.length()).trim();
 			String[] args = input.split(COMMAND_DELIMITER);
+			if (game == null) {
+				//Client sent a move while not in-game
+				System.err.println(player.toString() + " is not in-game");
+			}
 			try {
 				game.moveReceived(
 					player,
