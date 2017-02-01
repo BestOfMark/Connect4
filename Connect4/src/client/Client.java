@@ -92,7 +92,7 @@ public class Client {
 
 	/**
 	 * The main loop of the client. Handles communication with the <code>Player</code> and uses a <code>Protocoller</code> 
-	 * to communicate with the server.
+	 * to communicate with the server. 
 	 */
 	private void runtimeLoop() {
 		while (!exitRequested) {
