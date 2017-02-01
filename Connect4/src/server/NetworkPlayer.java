@@ -124,12 +124,6 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 	
 	public void close() {
 		try {
-			bw.close();
-		} catch (IOException e) {
-			System.err.println("Error while closing writer of player: " + this.toString());
-		}
-		ih.close();
-		try {
 			sock.close();
 		} catch (IOException e) {
 			System.err.println("Error while closing socket of player: " + this.toString());
