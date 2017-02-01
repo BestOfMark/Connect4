@@ -87,21 +87,6 @@ public class Server {
 	}
 	
 	/**
-	 * Close the <code>Porter</code>, such that the server cannot listen for new connections 
-	 * anymore.
-	 */
-	@SuppressWarnings("deprecation")
-	public void close() {
-		porter.isCloseRequested = true;
-		porter.interrupt();
-		Iterator<Integer> it = connectedPlayers.keySet().iterator();
-		while (it.hasNext()) {
-			NetworkPlayer player = connectedPlayers.get(it.next());
-			player.close();
-		}
-	}
-	
-	/**
 	 * Create an array that stores a random permutation of the set [0, <b>size</b>-1].
 	 * @param size the size of the random permutation array.
 	 * @return the random permutation

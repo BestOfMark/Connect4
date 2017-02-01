@@ -122,17 +122,6 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 		state = PlayerState.IDLE;
 	}
 	
-	@SuppressWarnings("deprecation")
-	public void close() {
-		try {
-			sock.close();
-		} catch (IOException e) {
-			System.err.println("Error while closing socket of player: " + this.toString());
-		}
-		ih.interrupt();
-		System.out.println("Successfully closed all handlers to this player: " + this.toString());
-	}
-	
 	@Override
 	public String toString() {
 		return "NetworkPlayer{id = " + id + ", name = " + username + ", socket = " + 
