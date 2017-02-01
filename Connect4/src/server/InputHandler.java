@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import client.Client;
 import client.CommandFormatException;
 
 public class InputHandler extends Thread {
@@ -217,6 +218,9 @@ public class InputHandler extends Thread {
 			server.chatReceived(player, inputCopy);
 		} else if (inputCopy.startsWith(CLIENT_REQUEST)) {
 			server.gameRequested(player);
+		} else if (Client.DEBUG && inputCopy.equals("TERMINATE")) {
+			//Close the server for testing
+			server.close();
 		} else {
 			//Extract the unknown command keyword if applicable.
 			int index = inputCopy.indexOf(' ');

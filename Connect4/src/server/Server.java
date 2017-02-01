@@ -92,6 +92,11 @@ public class Server {
 	 */
 	public void close() {
 		porter.isCloseRequested = true;
+		Iterator<Integer> it = connectedPlayers.keySet().iterator();
+		while (it.hasNext()) {
+			NetworkPlayer player = connectedPlayers.get(it.next());
+			player.close();
+		}
 	}
 	
 	/**

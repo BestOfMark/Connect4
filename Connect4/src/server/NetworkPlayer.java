@@ -122,6 +122,20 @@ public class NetworkPlayer implements Connect4Server, ChatCapabilityServer {
 		state = PlayerState.IDLE;
 	}
 	
+	public void close() {
+		try {
+			bw.close();
+		} catch (IOException e) {
+			System.err.println("Error while closing writer of player: " + this.toString());
+		}
+		ih.close();
+		try {
+			sock.close();
+		} catch (IOException e) {
+			System.err.println("Error while closing socket of player: " + this.toString());
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return "NetworkPlayer{id = " + id + ", name = " + username + ", socket = " + 

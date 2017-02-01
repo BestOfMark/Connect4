@@ -35,11 +35,16 @@ public class GUI extends View implements ActionListener {
 	
 	public GUI(Client client) {
 		super(client);
+		
+		//Initialize the GUI frame
 		frameGUI = new JFrame("Connect4 GUI");
 		frameGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frameGUI.setResizable(false);
 		
+		//This JPanel contains the field text area and the internal messages text area.
 		JPanel div = new JPanel(new BorderLayout());
+		
+		//The field is printed on a JTextArea inside a JPanel with a border;
 		JPanel p1 = new JPanel();
 		p1.setBorder(BorderFactory.createTitledBorder("Field"));
 		fieldArea = new JTextArea(10, 80);
@@ -48,38 +53,44 @@ public class GUI extends View implements ActionListener {
 		p1.add(fieldArea);
 		div.add(BorderLayout.NORTH, p1);
 		
+		//The internal messages are written to a scrollable JTextArea inside a bordered JPanel
 		JPanel p2 = new JPanel();
 		p2.setBorder(BorderFactory.createTitledBorder("Console"));
 		internMessages = new JTextArea(10, 50);
 		internMessages.setEditable(false);
 		internMessages.setLineWrap(true);
 		internMessages.setWrapStyleWord(true);
-		JScrollPane scroll = new JScrollPane (internMessages, 
+		JScrollPane scroll = new JScrollPane(internMessages, 
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		p2.add(scroll);
 		div.add(BorderLayout.SOUTH, p2);
 		
+		//The chat messages are written to a scrollable JTextArea inside a bordered JPanel
+		//Also the input field for chat messages and a Send button are inside this JPanel
 		JPanel p3 = new JPanel(new BorderLayout());
 		p3.setBorder(BorderFactory.createTitledBorder("Chat"));
 		chatMessages = new JTextArea(21, 30);
 		chatMessages.setEditable(false);
 		chatMessages.setLineWrap(true);
 		chatMessages.setWrapStyleWord(true);
+		JScrollPane scroll2 = new JScrollPane(chatMessages, 
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		outwardChat = new JTextField();
 		sendChat = new JButton("Send");
 		sendChat.addActionListener(this);
-		p3.add(BorderLayout.NORTH, chatMessages);
+		p3.add(BorderLayout.NORTH, scroll2);
 		p3.add(BorderLayout.CENTER, outwardChat);
 		p3.add(BorderLayout.EAST, sendChat);
 
+		//A giant button to request a new game
 		gameStart = new JButton("New game");
 		gameStart.addActionListener(this);
 		gameStart.setEnabled(true);
 		
+		//Add all the components to the frame and set it visible
 		frameGUI.add(BorderLayout.CENTER, div);
 		frameGUI.add(BorderLayout.EAST, p3);
 		frameGUI.add(BorderLayout.SOUTH, gameStart);
-		
 		frameGUI.pack();
 		frameGUI.setVisible(true);
 	}
@@ -109,9 +120,14 @@ public class GUI extends View implements ActionListener {
 		chatMessages.append(msg + "\n");
 	}
 
+	/**
+	 * This is method is fired either by the New Game button, or by the OK button in the 
+	 * move-pop-up or by the Send Chat button.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == gameStart) {
+			//A new game is to be requested
 			try {
 				control.client.getProtocoller().cmdGameRequest();
 				internalMessage("Game request sent");
@@ -119,6 +135,7 @@ public class GUI extends View implements ActionListener {
 				internalMessage("Something went wrong while sending game request");
 			}
 		} else if (e.getSource() == sendChat) {
+			//A chat message is to be send to the server
 			if (!outwardChat.getText().equals("")) {
 				try {
 					client.getProtocoller().cmdChat(outwardChat.getText());
