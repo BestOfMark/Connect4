@@ -96,7 +96,6 @@ public class Client {
 	 */
 	private void runtimeLoop() {
 		while (!exitRequested) {
-			if (GUI.frameGUI != null) GUI.frameGUI.setTitle(state.toString());
 			switch (state) {
 			case UNCONNECTED:
 				String address = control.requestAddress();
@@ -107,6 +106,7 @@ public class Client {
 						try {
 							protocoller.cmdHello(local.username, local instanceof ComputerPlayer, MAGIC_NUMBER);
 							state = GameState.IDLE;
+							if (DEBUG) System.out.println(state);
 						} catch (IOException e) {
 							view.internalMessage("Hello command failed");
 						}
@@ -148,6 +148,7 @@ public class Client {
 					state = GameState.UNCONNECTED;
 				}
 				state = GameState.GAME_AWAITING_RESPONSE;
+				if (DEBUG) System.out.println(state);
 				break;
 			case GAME_AWAITING_RESPONSE:
 				break;
@@ -171,6 +172,7 @@ public class Client {
 		control.setTimeout(millis);
 		local.setId(userID);
 		state = GameState.CONNECTED;
+		if (DEBUG) System.out.println(state);
 	}
 	
 	/**
@@ -200,8 +202,10 @@ public class Client {
 		getView().internalMessage("Length to win " + winLength);
 		if (startingPlayer == enemyID) {
 			state = GameState.GAME_WAIT;
+			if (DEBUG) System.out.println(state);
 		} else {
-			state = GameState.GAME_TURN; 			
+			state = GameState.GAME_TURN; 		
+			if (DEBUG) System.out.println(state);
 		}
 		view.update(field, "START");
 	}
@@ -232,6 +236,7 @@ public class Client {
 		view.internalMessage(input);
 		if (input.contains(Protocoller.CLIENT_MOVE)) {
 			if (local instanceof ComputerPlayer) state = GameState.UNCONNECTED;
+			
 		}
 	}
 
@@ -243,6 +248,7 @@ public class Client {
 	public void opponentLeft(int enemyID, String string) {
 		view.internalMessage(string);
 		state = GameState.CONNECTED;
+		if (DEBUG) System.out.println(state);
 	}
 
 	/**
@@ -261,6 +267,7 @@ public class Client {
 		}
 		view.update(field, "END");
 		state = GameState.CONNECTED;
+		if (DEBUG) System.out.println(state);
 	}
 
 	/**
@@ -278,10 +285,12 @@ public class Client {
 		if (moveId == local.getId()) {
 			field.addChip(local.chip, x, y);
 			state = GameState.GAME_WAIT;
+			if (DEBUG) System.out.println(state);
 		} else if (moveId == enemy.getId()) {
 			field.addChip(enemy.chip, x, y);
 			if (!field.checkWin(enemy.chip)) state = GameState.GAME_TURN;
 			else state = GameState.GAME_WAIT;
+			if (DEBUG) System.out.println(state);
 		} else if (moveId != local.getId() && moveId != enemy.getId()) {
 			System.err.println("UNKNOWN PLAYER DETECTED");
 			state = GameState.UNCONNECTED;
@@ -302,6 +311,7 @@ public class Client {
 	public void shutdown() {
 		if (state != GameState.UNCONNECTED) protocoller.close();
 		state = GameState.SHUTDOWN;
+		if (DEBUG) System.out.println(state);
 	}
 	
 	/**
@@ -330,7 +340,7 @@ public class Client {
 	}
 	
 	public static void main(String[] args) {
-		args = new String[]{"Mark", "-h"};
+		args = new String[]{"KaasLiefhebber", "-h"};
 		Player localPlayer = null;
 		if (args.length == 2) {
 			String username = args[0];
