@@ -468,6 +468,6 @@ public class Client {
 	/**
 	 * Displayed when one or multiple illegal arguments has been passed.
 	 */
-	private static final String USAGE_MSG = "Usage: [username] [-h (=Human) | "
+	private static final String USAGE_MSG = "Usage: [TUI | GUI] [username] [-h (=Human) | "
 			+ "-n (=Naive AI) | -s (=Smart AI) [prudence (>= 0 && <= 1]]";
 }

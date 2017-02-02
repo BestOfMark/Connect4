@@ -204,7 +204,8 @@ public class Server {
 	}
 
 	private static final String ARGS_MSG = 
-			"Usage: [x-dimension] [y-dimension] [z-dimension] [win-length] [thinking time (in ms)]";
+			"Usage: [port] [x-dimension] [y-dimension] [z-dimension] [win-length] "
+			+ "[thinking time (in ms)]";
 	private static final String NOT_A_NUMBER = "Arguments must be numbers";
 	public static int dimX, dimY, dimZ, winLength;
 	public static int thinkTime = 60000;
