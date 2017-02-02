@@ -47,6 +47,7 @@ public class TUIController extends Controller {
 	public Point requestMove(Field fCopy) {
 		inputWaiterLock.lock();
 		view.internalMessage("What is your move?");
+		view.internalMessage("Format: \\move [x] [y]");
 		try {
 			if (player instanceof ComputerPlayer) {
 				return ((ComputerPlayer) player).getMove(fCopy);
@@ -70,6 +71,7 @@ public class TUIController extends Controller {
 		inputWaiterLock.lock();
 		try {
 			view.internalMessage("Please input the ip-address of the server");
+			view.internalMessage("Format: \\address [ip-adress] [portnumber]" );
 			try {
 				addressEntered.await(MESSAGE_FREQUENCY, TimeUnit.SECONDS);
 				return address;

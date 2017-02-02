@@ -50,7 +50,7 @@ public class Client {
 	 * If <code>debug</code> == <code>true</code>, the debug messages are
 	 * Visible. If <code>debug</code> == <code>false</code>, the debug messages are invisible. 
 	 */
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	
 	/**
 	 * Contains the supported features of the <code>Client</code>.
@@ -196,6 +196,8 @@ public class Client {
 		if (DEBUG) {
 			System.out.println(state);
 		}
+		view.internalMessage("Please request a game");
+		view.internalMessage("Format: \\request");
 	}
 	
 	/**
@@ -394,7 +396,7 @@ public class Client {
 	}
 	
 	public static void main(String[] args) {
-//		args = new String[]{"TUI", "Yuno", "-s", "0.5"};
+//		args = new String[]{"TUI", "Rutger", "-h"};
 		Player localPlayer = null;
 		if (args.length == 3) {
 			String username = args[1];

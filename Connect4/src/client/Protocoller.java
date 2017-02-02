@@ -77,6 +77,7 @@ public class Protocoller implements Connect4Client, ChatCapabilityClient {
 		bw.write(String.join(COMMAND_DELIMITER, CLIENT_REQUEST));
 		bw.newLine();
 		bw.flush();
+		client.getView().internalMessage("Game request sent");
 	}
 
 	@Override
