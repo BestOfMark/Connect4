@@ -76,22 +76,28 @@ public class Client {
 	private GameState state = GameState.UNCONNECTED;
 	
 	/**
-	 * The dumbAI is used to make a move when the player does not make his move in time.
+	 * Used to make a move when the player does not make his move in time, and to give hints.
 	 */
-	//@ invariant dumbAI != null;
-	private ComputerPlayer dumbAI;
+	//@ invariant hintAIAI != null;
+	private ComputerPlayer hintAI;
 	
 	/**
 	 * Initialize the client.
 	 */
-	public Client(Player localPlayer) {
+	public Client(Player localPlayer, boolean wantGUI) {
 		local = localPlayer;
-		control = new TUIController(this);
-		view = new TUI(this);
+		if (wantGUI) {
+			control = new GUIController(this);
+			view = new GUI(this);
+		} else {
+			control = new TUIController(this);
+			view = new TUI(this);
+		}
 		control.setView(view);
 		control.setPlayer(local);
 		view.setController(control);
-		dumbAI = new NaiveAI(local.username, local.chip);
+		
+		hintAI = new Yuno(local.username, local.chip, 0.5D);
 	}
 
 	/**
@@ -132,6 +138,8 @@ public class Client {
 				case CONNECTED:
 					break;
 				case GAME_TURN:
+					Point hint = hintAI.getMove(field.deepCopy());
+					view.internalMessage("Hint: " + hint.x + " " + hint.y);
 					Point p = control.requestMove(field.deepCopy());
 					if (p != null) {
 						view.internalMessage("Obtained move " + p.toString());
@@ -139,7 +147,7 @@ public class Client {
 						view.internalMessage("Turn timed out");
 					
 						//What happens next
-						p = dumbAI.getMove(field.deepCopy());
+						p = hintAI.getMove(field.deepCopy());
 					}
 					if (!field.inBounds(p.x, p.y) || field.columnFull(p.x, p.y)) {
 						if (local instanceof ComputerPlayer) {
@@ -386,14 +394,14 @@ public class Client {
 	}
 	
 	public static void main(String[] args) {
-//		args = new String[]{"Yuno", "-s", "0.5"};
+//		args = new String[]{"TUI", "Yuno", "-s", "0.5"};
 		Player localPlayer = null;
-		if (args.length == 2) {
-			String username = args[0];
-			if (args[1].toLowerCase().equals("-h")) {
+		if (args.length == 3) {
+			String username = args[1];
+			if (args[2].toLowerCase().equals("-h")) {
 				//Human player
 				localPlayer = new HumanPlayer(username, Chip.RED);
-			} else if (args[1].toLowerCase().equals("-n")) {
+			} else if (args[2].toLowerCase().equals("-n")) {
 				//Naive AI
 				localPlayer = new NaiveAI(username, Chip.RED);
 			} else {
@@ -401,14 +409,14 @@ public class Client {
 				System.out.println(USAGE_MSG);
 				return;
 			}
-		} else if (args.length == 3) {
+		} else if (args.length == 4) {
 			//Three arguments is only valid for the smart AI option
-			if (args[1].toLowerCase().equals("-s")) {
+			if (args[2].toLowerCase().equals("-s")) {
 				try {
 					//Third argument is the prudence factor. See javadoc of Yuno class for details
-					double prudence = Double.parseDouble(args[2]);
+					double prudence = Double.parseDouble(args[3]);
 					if (prudence >= 0 && prudence <= 1) {
-						localPlayer = new Yuno(args[0], Chip.RED, prudence);
+						localPlayer = new Yuno(args[1], Chip.RED, prudence);
 					} else {
 						//The prudence is not between 0 and 1
 						System.out.println(USAGE_MSG);
@@ -429,14 +437,28 @@ public class Client {
 			System.out.println(USAGE_MSG);
 			return;
 		}
+		boolean wantGUI;
+		if (args[0].equalsIgnoreCase("TUI")) {
+			wantGUI = false;
+		} else if (args[0].equalsIgnoreCase("GUI")) {
+			wantGUI = true;
+		} else {
+			System.out.println(FIRST_ARG_MSG);
+			return;
+		}
 		//The localplayer should have been initialized. If something was wrong with the arguments, 
 		// the main method should have returned already
 		assert localPlayer != null;
-		Client c = new Client(localPlayer);
+		Client c = new Client(localPlayer, wantGUI);
 		
 		//Start the main loop
 		c.runtimeLoop();
 	}
+	
+	/**
+	 * Displayed when the first argument is illegal.
+	 */
+	private static final String FIRST_ARG_MSG = "First argument must either be 'GUI' or 'TUI'";
 	
 	/**
 	 * Displayed when a wrong number of arguments are given.

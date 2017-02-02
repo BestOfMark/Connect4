@@ -36,18 +36,21 @@ public class Server {
 	/**
 	 * Initialize the server.
 	 */
-	public Server() {
+	public Server(int port) {
 		//Initialize the collections
 		connectedPlayers = new HashMap<>();
 		games = new ArrayList<>();
 		
 		//Spawn the thread that will listen for new connections.
 		try {
-			porter = new Porter(this);
+			porter = new Porter(this, port);
 			porter.start();
 		} catch (IOException e) {
-			System.err.println("Failed setting up a server socket");
+			System.err.println("Failed setting up a server socket on port " + port);
+			return;
 		}
+		
+		System.out.println("Server started on port " + port);
 	}
 	
 	/**
@@ -120,11 +123,6 @@ public class Server {
 	private class Porter extends Thread {
 		
 		/**
-		 * The port to which the server is connected.
-		 */
-		private static final int PORT = 666;
-		
-		/**
 		 * Stores the <code>Server</code> object, which should be passed to the constructor of 
 		 * <code>NetworkPlayer</code>.
 		 */
@@ -148,9 +146,9 @@ public class Server {
 		 * is associated.
 		 * @throws IOException when something goes wrong while opening the server socket.
 		 */
-		public Porter(Server server) throws IOException {
+		public Porter(Server server, int port) throws IOException {
 			this.server = server;
-			ss = new ServerSocket(PORT);
+			ss = new ServerSocket(port);
 		}
 		
 		/**
@@ -179,15 +177,17 @@ public class Server {
 	 * @param args array of command line arguments. See ARGS_MSG for the required arguments
 	 */
 	public static void main(String[] args) {
-//		args = new String[]{"4", "4", "4", "4", "60000"};
-		if (args.length == 5) {
+//		args = new String[]{"123", "4", "4", "4", "4", "60000"};
+		int port;
+		if (args.length == 6) {
 			//Parse the arguments
 			try {
-				dimX = Integer.parseInt(args[0]);
-				dimY = Integer.parseInt(args[1]);
-				dimZ = Integer.parseInt(args[2]);
-				winLength = Integer.parseInt(args[3]);
-				thinkTime = Integer.parseInt(args[4]);
+				port = Integer.parseInt(args[0]);
+				dimX = Integer.parseInt(args[1]);
+				dimY = Integer.parseInt(args[2]);
+				dimZ = Integer.parseInt(args[3]);
+				winLength = Integer.parseInt(args[4]);
+				thinkTime = Integer.parseInt(args[5]);
 			} catch (NumberFormatException e) {
 				//One or more argument is not a number
 				System.out.println(NOT_A_NUMBER);
@@ -200,7 +200,7 @@ public class Server {
 		}
 		//If something was wrong with the program arguments, 
 		//the method should have already returned.
-		new Server();
+		new Server(port);
 	}
 
 	private static final String ARGS_MSG = 
